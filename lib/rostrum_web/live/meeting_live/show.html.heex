@@ -1,0 +1,41 @@
+<.header>
+  Meeting {@meeting.id}
+  <:subtitle>This is a meeting record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/meetings/#{@meeting}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit meeting</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Date">{@meeting.date}</:item>
+  <:item title="Metadata">{@meeting.metadata}</:item>
+  <:item title="Events">{@meeting.events}</:item>
+</.list>
+
+<.events_editor data={@meeting} />
+
+<.back navigate={~p"/meetings"}>Back to meetings</.back>
+
+<.modal :if={@live_action == :edit} id="meeting-modal" show on_cancel={JS.patch(~p"/meetings/#{@meeting}")}>
+  <.live_component
+    module={RostrumWeb.MeetingLive.FormComponent}
+    id={@meeting.id}
+    title={@page_title}
+    action={@live_action}
+    meeting={@meeting}
+    patch={~p"/meetings/#{@meeting}"}
+  />
+</.modal>
+
+<.modal :if={@live_action == :new_event} id="event-modal" show on_cancel={JS.patch(~p"/meetings/#{@meeting}")}>
+  <.live_component
+    module={RostrumWeb.MeetingLive.NewEventForm}
+    id={@meeting.id}
+    title={@page_title}
+    action={@live_action}
+    meeting={@meeting}
+    patch={~p"/meetings/#{@meeting}"}
+  />
+</.modal>

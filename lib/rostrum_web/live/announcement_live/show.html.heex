@@ -1,0 +1,29 @@
+<.header>
+  Announcement {@announcement.id}
+  <:subtitle>This is a announcement record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/announcements/#{@announcement}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit announcement</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Start display">{@announcement.start_display}</:item>
+  <:item title="End display">{@announcement.end_display}</:item>
+  <:item title="Title">{@announcement.title}</:item>
+  <:item title="Description">{@announcement.description}</:item>
+</.list>
+
+<.back navigate={~p"/announcements"}>Back to announcements</.back>
+
+<.modal :if={@live_action == :edit} id="announcement-modal" show on_cancel={JS.patch(~p"/announcements/#{@announcement}")}>
+  <.live_component
+    module={RostrumWeb.AnnouncementLive.FormComponent}
+    id={@announcement.id}
+    title={@page_title}
+    action={@live_action}
+    announcement={@announcement}
+    patch={~p"/announcements/#{@announcement}"}
+  />
+</.modal>

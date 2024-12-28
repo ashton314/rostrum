@@ -1,0 +1,44 @@
+<.header>
+  Listing Announcements
+  <:actions>
+    <.link patch={~p"/announcements/new"}>
+      <.button>New Announcement</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="announcements"
+  rows={@streams.announcements}
+  row_click={fn {_id, announcement} -> JS.navigate(~p"/announcements/#{announcement}") end}
+>
+  <:col :let={{_id, announcement}} label="Start display">{announcement.start_display}</:col>
+  <:col :let={{_id, announcement}} label="End display">{announcement.end_display}</:col>
+  <:col :let={{_id, announcement}} label="Title">{announcement.title}</:col>
+  <:col :let={{_id, announcement}} label="Description">{announcement.description}</:col>
+  <:action :let={{_id, announcement}}>
+    <div class="sr-only">
+      <.link navigate={~p"/announcements/#{announcement}"}>Show</.link>
+    </div>
+    <.link patch={~p"/announcements/#{announcement}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, announcement}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: announcement.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="announcement-modal" show on_cancel={JS.patch(~p"/announcements")}>
+  <.live_component
+    module={RostrumWeb.AnnouncementLive.FormComponent}
+    id={@announcement.id || :new}
+    title={@page_title}
+    action={@live_action}
+    announcement={@announcement}
+    patch={~p"/announcements"}
+  />
+</.modal>

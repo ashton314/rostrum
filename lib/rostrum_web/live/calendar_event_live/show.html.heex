@@ -1,0 +1,30 @@
+<.header>
+  Calendar event {@calendar_event.id}
+  <:subtitle>This is a calendar_event record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/calendar_events/#{@calendar_event}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit calendar_event</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Start display">{@calendar_event.start_display}</:item>
+  <:item title="Event date">{@calendar_event.event_date}</:item>
+  <:item title="Time description">{@calendar_event.time_description}</:item>
+  <:item title="Title">{@calendar_event.title}</:item>
+  <:item title="Description">{@calendar_event.description}</:item>
+</.list>
+
+<.back navigate={~p"/calendar_events"}>Back to calendar_events</.back>
+
+<.modal :if={@live_action == :edit} id="calendar_event-modal" show on_cancel={JS.patch(~p"/calendar_events/#{@calendar_event}")}>
+  <.live_component
+    module={RostrumWeb.CalendarEventLive.FormComponent}
+    id={@calendar_event.id}
+    title={@page_title}
+    action={@live_action}
+    calendar_event={@calendar_event}
+    patch={~p"/calendar_events/#{@calendar_event}"}
+  />
+</.modal>

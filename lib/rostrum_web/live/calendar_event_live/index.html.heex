@@ -1,0 +1,45 @@
+<.header>
+  Listing Calendar events
+  <:actions>
+    <.link patch={~p"/calendar_events/new"}>
+      <.button>New Calendar event</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="calendar_events"
+  rows={@streams.calendar_events}
+  row_click={fn {_id, calendar_event} -> JS.navigate(~p"/calendar_events/#{calendar_event}") end}
+>
+  <:col :let={{_id, calendar_event}} label="Start display">{calendar_event.start_display}</:col>
+  <:col :let={{_id, calendar_event}} label="Event date">{calendar_event.event_date}</:col>
+  <:col :let={{_id, calendar_event}} label="Time description">{calendar_event.time_description}</:col>
+  <:col :let={{_id, calendar_event}} label="Title">{calendar_event.title}</:col>
+  <:col :let={{_id, calendar_event}} label="Description">{calendar_event.description}</:col>
+  <:action :let={{_id, calendar_event}}>
+    <div class="sr-only">
+      <.link navigate={~p"/calendar_events/#{calendar_event}"}>Show</.link>
+    </div>
+    <.link patch={~p"/calendar_events/#{calendar_event}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, calendar_event}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: calendar_event.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="calendar_event-modal" show on_cancel={JS.patch(~p"/calendar_events")}>
+  <.live_component
+    module={RostrumWeb.CalendarEventLive.FormComponent}
+    id={@calendar_event.id || :new}
+    title={@page_title}
+    action={@live_action}
+    calendar_event={@calendar_event}
+    patch={~p"/calendar_events"}
+  />
+</.modal>
