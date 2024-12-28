@@ -11,10 +11,9 @@
 <.list>
   <:item title="Date">{@meeting.date}</:item>
   <:item title="Metadata">{@meeting.metadata}</:item>
-  <:item title="Events">{@meeting.events}</:item>
 </.list>
 
-<.events_editor data={@meeting} />
+<.events_editor meeting={@meeting} />
 
 <.back navigate={~p"/meetings"}>Back to meetings</.back>
 

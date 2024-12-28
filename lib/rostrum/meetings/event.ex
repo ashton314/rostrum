@@ -2,6 +2,7 @@ defmodule Rostrum.Meetings.Event do
   import Ecto.Changeset
 
   @derive JSON.Encoder
+  @derive Jason.Encoder
   defstruct [:type, :term, :number, :name, :verses, :performer]
 
   @field_types %{type: :string, term: :string, number: :integer, name: :string, verses: :string, performer: :string}

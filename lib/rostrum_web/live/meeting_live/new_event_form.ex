@@ -2,6 +2,7 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
   use RostrumWeb, :live_component
 
   alias Rostrum.Meetings
+  alias Rostrum.Meetings.Event
 
   @impl true
   def render(assigns) do
@@ -83,33 +84,51 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
-  # def handle_event("save", %{"meeting" => meeting_params}, socket) do
-  #   save_meeting(socket, socket.assigns.action, meeting_params)
+  def handle_event("save", %{"event" => event_params}, socket) do
+    save_event(socket, socket.assigns.action, event_params)
+  end
+
+  # defp save_event(socket, :edit, event_params) do
+  #   case Events.update_event(socket.assigns.event, event_params) do
+  #     {:ok, event} ->
+  #       notify_parent({:saved, event})
+
+  #       {:noreply,
+  #        socket
+  #        |> put_flash(:info, "Event updated successfully")
+  #        |> push_patch(to: socket.assigns.patch)}
+
+  #     {:error, %Ecto.Changeset{} = changeset} ->
+  #       {:noreply, assign(socket, form: to_form(changeset))}
+  #   end
   # end
 
-  defp save_meeting(socket, :edit, meeting_params) do
-    case Meetings.update_meeting(socket.assigns.meeting, meeting_params) do
-      {:ok, meeting} ->
-        notify_parent({:saved, meeting})
+  defp save_event(socket, :new_event, event_params) do
+    cs = Event.changeset(socket.assigns.event, event_params)
+    if cs.valid? do
+      {:ok, e} = Ecto.Changeset.apply_action(cs, :edit)
+      e = e
+      |> Map.from_struct
+      |> Enum.map(fn {k, v} -> {Atom.to_string(k), v} end)
+      |> Enum.into(%{})
 
-        {:noreply,
-         socket
-         |> put_flash(:info, "Meeting updated successfully")
-         |> push_patch(to: socket.assigns.patch)}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
+      es = Map.get(socket.assigns.meeting, :events, %{"events" => []}) || %{"events" => []}
+      dbg(e)
+      dbg(es["events"])
+      save_meeting(socket, :edit, %{events: %{"events" => [e | es["events"]]}})
+    else
+      {:noreply, assign(socket, form: to_form(cs))}
     end
   end
 
-  defp save_meeting(socket, :new, meeting_params) do
-    case Meetings.create_meeting(meeting_params) do
+  defp save_meeting(socket, :edit, meeting_params) do
+    case dbg(Meetings.update_meeting(socket.assigns.meeting, meeting_params)) do
       {:ok, meeting} ->
         notify_parent({:saved, meeting})
 
         {:noreply,
          socket
-         |> put_flash(:info, "Meeting created successfully")
+         |> put_flash(:info, "Event added successfully")
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->

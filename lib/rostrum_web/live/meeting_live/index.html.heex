@@ -14,7 +14,6 @@
 >
   <:col :let={{_id, meeting}} label="Date">{meeting.date}</:col>
   <:col :let={{_id, meeting}} label="Metadata">{meeting.metadata}</:col>
-  <:col :let={{_id, meeting}} label="Events">{meeting.events}</:col>
   <:action :let={{_id, meeting}}>
     <div class="sr-only">
       <.link navigate={~p"/meetings/#{meeting}"}>Show</.link>
