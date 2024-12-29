@@ -3,16 +3,16 @@ defmodule Rostrum.Meetings.Event do
 
   @derive JSON.Encoder
   @derive Jason.Encoder
-  defstruct [:type, :term, :number, :name, :verses, :performer]
+  defstruct [:id, :type, :term, :number, :name, :verses, :performer]
 
-  @field_types %{type: :string, term: :string, number: :integer, name: :string, verses: :string, performer: :string}
+  @field_types %{id: :string, type: :string, term: :string, number: :integer, name: :string, verses: :string, performer: :string}
   @allowed_types ["opening-hymn", "closing-hymn", "rest-hymn", "hymn", "musical-number",
                   "speaker", "opening-prayer", "closing-prayer", "sacrament", "baby-blessing", "announcements", "custom"]
 
   def changeset(e, attrs) do
     {e, @field_types}
     |> cast(attrs, Map.keys(@field_types))
-    |> validate_required([:type])
+    |> validate_required([:id, :type])
     |> validate_inclusion(:type, @allowed_types)
   end
 

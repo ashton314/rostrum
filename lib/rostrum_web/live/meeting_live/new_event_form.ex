@@ -60,7 +60,6 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
 
   @impl true
   def update(%{event: event} = assigns, socket) do
-    dbg(assigns)
     {:ok, socket
     |> assign(assigns)
     |> assign_new(:form, fn ->
@@ -69,7 +68,8 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
   end
 
   def update(assigns, socket) do
-    fresh_event = %Meetings.Event{type: "opening-hymn"}
+    id = UUID.uuid4()
+    fresh_event = %Meetings.Event{id: id, type: "opening-hymn"}
     {:ok, socket
     |> assign(assigns)
     |> assign(:event, fresh_event)
@@ -88,21 +88,6 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
     save_event(socket, socket.assigns.action, event_params)
   end
 
-  # defp save_event(socket, :edit, event_params) do
-  #   case Events.update_event(socket.assigns.event, event_params) do
-  #     {:ok, event} ->
-  #       notify_parent({:saved, event})
-
-  #       {:noreply,
-  #        socket
-  #        |> put_flash(:info, "Event updated successfully")
-  #        |> push_patch(to: socket.assigns.patch)}
-
-  #     {:error, %Ecto.Changeset{} = changeset} ->
-  #       {:noreply, assign(socket, form: to_form(changeset))}
-  #   end
-  # end
-
   defp save_event(socket, :new_event, event_params) do
     cs = Event.changeset(socket.assigns.event, event_params)
     if cs.valid? do
@@ -113,9 +98,7 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
       |> Enum.into(%{})
 
       es = Map.get(socket.assigns.meeting, :events, %{"events" => []}) || %{"events" => []}
-      dbg(e)
-      dbg(es["events"])
-      save_meeting(socket, :edit, %{events: %{"events" => [e | es["events"]]}})
+      save_meeting(socket, :edit, %{events: %{"events" => es["events"] ++ [e]}})
     else
       {:noreply, assign(socket, form: to_form(cs))}
     end
