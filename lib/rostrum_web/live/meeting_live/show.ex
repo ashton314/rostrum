@@ -158,7 +158,7 @@ defmodule RostrumWeb.MeetingLive.Show do
       {:ok, meeting} ->
         {:noreply, assign(socket |> put_flash(:info, "Updated"), :meeting, meeting)}
 
-      {:error, cs} ->
+      {:error, _cs} ->
         {:noreply, put_flash(socket, :error, "Unable to update meeting")}
     end
   end

@@ -446,4 +446,34 @@ defmodule Rostrum.Accounts do
   def change_unit(%Unit{} = unit, attrs \\ %{}) do
     Unit.changeset(unit, attrs)
   end
+
+  # Users and Units
+  def get_units_for_user(user_id) do
+    User
+    |> Repo.get(user_id)
+    |> Repo.preload(:units)
+    |> Map.get(:units)
+  end
+
+  def load_units(%User{} = user) do
+    user |> Repo.preload(:units)
+  end
+
+  def get_users_for_unit(unit_id) do
+    Unit
+    |> Repo.get(unit_id)
+    |> Repo.preload(:users)
+    |> Map.get(:users)
+  end
+
+  def add_user_to_unit(user_id, unit_id) do
+    user = Repo.get(User, user_id)
+    unit = Repo.get(Unit, unit_id)
+
+    user
+    |> Repo.preload(:units)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:units, [unit | user.units])
+    |> Repo.update()
+  end
 end

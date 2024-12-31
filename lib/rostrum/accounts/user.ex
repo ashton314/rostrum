@@ -8,6 +8,7 @@ defmodule Rostrum.Accounts.User do
     field :hashed_password, :string, redact: true
     field :current_password, :string, virtual: true, redact: true
     field :confirmed_at, :utc_datetime
+    many_to_many :units, Rostrum.Accounts.Unit, join_through: "users_units"
 
     timestamps(type: :utc_datetime)
   end

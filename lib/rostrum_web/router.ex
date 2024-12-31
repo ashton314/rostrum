@@ -101,11 +101,11 @@ defmodule RostrumWeb.Router do
     live "/units/:id", UnitLive.Show, :show
     live "/units/:id/show/edit", UnitLive.Show, :edit
 
-    live "/meetings", MeetingLive.Index, :index
-    live "/meetings/new", MeetingLive.Index, :new
-    live "/meetings/:id/edit", MeetingLive.Index, :edit
-    live "/meetings/:id", MeetingLive.Show, :show
-    live "/meetings/:id/show/edit", MeetingLive.Show, :edit
+    # live "/meetings", MeetingLive.Index, :index
+    # live "/meetings/new", MeetingLive.Index, :new
+    # live "/meetings/:id/edit", MeetingLive.Index, :edit
+    # live "/meetings/:id", MeetingLive.Show, :show
+    # live "/meetings/:id/show/edit", MeetingLive.Show, :edit
 
     live "/calendar_events", CalendarEventLive.Index, :index
     live "/calendar_events/new", CalendarEventLive.Index, :new
