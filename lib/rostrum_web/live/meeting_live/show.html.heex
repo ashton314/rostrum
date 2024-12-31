@@ -28,6 +28,18 @@
   />
 </.modal>
 
+<.modal :if={@live_action == :edit_event} id="event-modal" show on_cancel={JS.patch(~p"/meetings/#{@meeting}")}>
+  <.live_component
+    module={RostrumWeb.MeetingLive.NewEventForm}
+    id={@meeting.id}
+    title={@page_title}
+    action={@live_action}
+    meeting={@meeting}
+    event={@event}
+    patch={~p"/meetings/#{@meeting}"}
+  />
+</.modal>
+
 <.modal :if={@live_action == :new_event} id="event-modal" show on_cancel={JS.patch(~p"/meetings/#{@meeting}")}>
   <.live_component
     module={RostrumWeb.MeetingLive.NewEventForm}

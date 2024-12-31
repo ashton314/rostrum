@@ -18,17 +18,19 @@ defmodule RostrumWeb.MeetingLive.Show do
   end
 
   def events_editor(assigns) do
-    es = Map.get(dbg(assigns.meeting), :events, %{"events" => []}) || %{"events" => []}
+    es = Map.get(assigns.meeting, :events, %{"events" => []}) || %{"events" => []}
 
     assigns =
       assigns
       |> assign(:es, es["events"] || [])
 
+    meeting = assigns.meeting
+
     ~H"""
     <.table
       id="events"
       rows={@es}
-      row_click={fn e -> JS.push("event-edit", value: %{event: e}) end}
+      row_click={fn e -> JS.navigate(~p|/meetings/#{meeting}/show/event/#{e["id"]}|) end}
     >
       <:col :let={event}><.render_event event={event} /></:col>
       <:action :let={event}><.button phx-click={JS.push("event-up", value: %{event: event})}>↑</.button></:action>
@@ -36,7 +38,7 @@ defmodule RostrumWeb.MeetingLive.Show do
       <:action :let={event}><.button phx-click={JS.push("event-delete", value: %{event: event})}>Delete</.button></:action>
     </.table>
 
-    <.link patch={~p"/meetings/#{@meeting}/show/new_event"} phx-click={JS.push_focus()}>
+    <.link patch={~p"/meetings/#{@meeting}/show/event/new"} phx-click={JS.push_focus()}>
       <.button>+ Event</.button>
     </.link>
     """
@@ -55,6 +57,9 @@ defmodule RostrumWeb.MeetingLive.Show do
       "sacrament" => "Sacrament",
       "baby-blessing" => "Baby blessing",
       "announcements" => "Announcements",
+      "ward-business" => "Ward Business",
+      "stake-business" => "Stake Business",
+      "ward-stake-business" => "Ward & Stake Business",
       "custom" => "Custom"
     }
 
@@ -89,10 +94,6 @@ defmodule RostrumWeb.MeetingLive.Show do
   end
 
   @impl true
-  def handle_event("add_event", _data, socket) do
-    {:noreply, socket}
-  end
-
   def handle_event("event-up", %{"event" => event}, socket) do
     meeting = socket.assigns.meeting
     params = Meetings.Meeting.move_event_up(meeting, event["id"])
@@ -111,11 +112,6 @@ defmodule RostrumWeb.MeetingLive.Show do
     update_events(socket, params)
   end
 
-  def handle_event("event-edit", %{"event" => event}, socket) do
-    dbg(event)
-    {:noreply, socket}
-  end
-
   @impl true
   def handle_info({RostrumWeb.MeetingLive.NewEventForm, {:saved, meeting}}, socket) do
     {:noreply, assign(socket, :meeting, meeting)}
@@ -126,7 +122,6 @@ defmodule RostrumWeb.MeetingLive.Show do
   end
 
   defp update_events(socket, %{events: new_events}) do
-    dbg(new_events)
     case Meetings.update_meeting(socket.assigns.meeting, %{events: %{"events" => new_events}}) do
       {:ok, meeting} ->
         dbg(meeting)
@@ -139,6 +134,17 @@ defmodule RostrumWeb.MeetingLive.Show do
   end
 
   defp update_events(socket, %{}), do: {:noreply, socket}
+
+  defp apply_action(socket, :edit_event, %{"event_id" => event_id}) do
+    meeting = socket.assigns.meeting
+    {:ok, event} = Meetings.Meeting.fetch_event(meeting, event_id) |> Meetings.Event.from_map()
+
+    dbg(event)
+
+    socket
+    |> assign(:page_title, "Edit Event")
+    |> assign(:event, event)
+  end
 
   defp apply_action(socket, :new_event, _params) do
     id = UUID.uuid4()
@@ -153,4 +159,5 @@ defmodule RostrumWeb.MeetingLive.Show do
   defp page_title(:show), do: "Show Meeting"
   defp page_title(:edit), do: "Edit Meeting"
   defp page_title(:new_event), do: "New Event"
+  defp page_title(:edit_event), do: "New Event"
 end

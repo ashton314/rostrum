@@ -5,15 +5,44 @@ defmodule Rostrum.Meetings.Event do
   @derive Jason.Encoder
   defstruct [:id, :type, :term, :number, :name, :verses, :performer]
 
-  @field_types %{id: :string, type: :string, term: :string, number: :integer, name: :string, verses: :string, performer: :string}
-  @allowed_types ["opening-hymn", "closing-hymn", "rest-hymn", "hymn", "musical-number",
-                  "speaker", "opening-prayer", "closing-prayer", "sacrament", "baby-blessing", "announcements", "custom"]
+  @field_types %{
+    id: :string,
+    type: :string,
+    term: :string,
+    number: :integer,
+    name: :string,
+    verses: :string,
+    performer: :string
+  }
+  @allowed_types [
+    "opening-hymn",
+    "closing-hymn",
+    "sacrament-hymn",
+    "rest-hymn",
+    "hymn",
+    "musical-number",
+    "speaker",
+    "opening-prayer",
+    "closing-prayer",
+    "sacrament",
+    "baby-blessing",
+    "announcements",
+    "ward-business",
+    "stake-business",
+    "ward-stake-business",
+    "custom"
+  ]
 
   def changeset(e, attrs) do
     {e, @field_types}
     |> cast(attrs, Map.keys(@field_types))
     |> validate_required([:id, :type])
     |> validate_inclusion(:type, @allowed_types)
+  end
+
+  def from_map(attrs) do
+    changeset(%__MODULE__{}, attrs)
+    |> apply_action(:edit)
   end
 
   def hymn_name(nil), do: ""

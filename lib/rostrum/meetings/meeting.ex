@@ -81,4 +81,12 @@ defmodule Rostrum.Meetings.Meeting do
       _ -> false
     end)
   end
+
+  def fetch_event(meeting, event_id) do
+    if(meeting.events, do: meeting.events["events"], else: [])
+    |> Enum.find(fn
+      %{"id" => ^event_id} -> true
+      _ -> false
+    end)
+  end
 end

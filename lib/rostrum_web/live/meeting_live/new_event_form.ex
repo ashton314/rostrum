@@ -19,35 +19,54 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
         phx-change="validate"
         phx-submit="save"
       >
-
-        <.input field={@form[:type]} type="select" label="Type"
+        <.input
+          field={@form[:type]}
+          type="select"
+          label="Type"
           value={@form[:type].value}
           options={[
-            "Music": [{"Opening Hymn", "opening-hymn"}, {"Closing Hymn", "closing-hymn"},
-                      {"Rest Hymn", "rest-hymn"}, {"Hymn", "hymn"},
-                      {"Musical number", "musical-number"}],
-            "Speaker": [{"Speaker", "speaker"}],
-            "Prayer": [{"Invocation", "opening-prayer"}, {"Benediction", "closing-prayer"}],
-            "Ordinance": [{"Sacrament", "sacrament"}, {"Baby blessing", "baby-blessing"}],
-            "Other": [{"Announcements", "announcements"}, {"Custom", "custom"}]
-            ]} />
-        <%= if @form[:type].value in ["opening-hymn", "closing-hymn", "rest-hymn", "hymn"] do %>
-        <.input field={@form[:number]} type="number" label="Hymn number" />
-        <%= Meetings.Event.hymn_name(@form[:number].value) %>
-        <.input field={@form[:verses]} type="text" label="Verses (optional)" placeholder="e.g. 1, 2, 3" />
-        <.input field={@form[:term]} type="text" label="Custom term (optional)" />
+            Music: [
+              {"Opening Hymn", "opening-hymn"},
+              {"Closing Hymn", "closing-hymn"},
+              {"Sacrament Hymn", "sacrament-hymn"},
+              {"Rest Hymn", "rest-hymn"},
+              {"Hymn", "hymn"},
+              {"Musical number", "musical-number"}
+            ],
+            Speaker: [{"Speaker", "speaker"}],
+            Prayer: [{"Invocation", "opening-prayer"}, {"Benediction", "closing-prayer"}],
+            Ordinance: [{"Sacrament", "sacrament"}, {"Baby blessing", "baby-blessing"}],
+            Other: [
+              {"Announcements", "announcements"},
+              {"Ward Business", "ward-business"},
+              {"Stake Business", "stake-business"},
+              {"Ward & Stake Business", "ward-stake-business"},
+              {"Custom", "custom"}
+            ]
+          ]}
+        />
+        <%= if @form[:type].value in ["opening-hymn", "closing-hymn", "sacrament-hymn", "rest-hymn", "hymn"] do %>
+          <.input field={@form[:number]} type="number" label="Hymn number" />
+          {Meetings.Event.hymn_name(@form[:number].value)}
+          <.input
+            field={@form[:verses]}
+            type="text"
+            label="Verses (optional)"
+            placeholder="e.g. 1, 2, 3"
+          />
+          <.input field={@form[:term]} type="text" label="Custom term (optional)" />
         <% end %>
         <%= if @form[:type].value in ["musical-number"] do %>
-        <.input field={@form[:name]} type="text" label="Song name" />
-        <.input field={@form[:performer]} type="text" label="Performer" />
-        <.input field={@form[:term]} type="text" label="Custom term (optional)" />
+          <.input field={@form[:name]} type="text" label="Song name" />
+          <.input field={@form[:performer]} type="text" label="Performer" />
+          <.input field={@form[:term]} type="text" label="Custom term (optional)" />
         <% end %>
         <%= if @form[:type].value in ["opening-prayer", "closing-prayer", "speaker"] do %>
-        <.input field={@form[:name]} type="text" label="Name of person" />
-        <.input field={@form[:term]} type="text" label="Custom term (optional)" />
+          <.input field={@form[:name]} type="text" label="Name of person" />
+          <.input field={@form[:term]} type="text" label="Custom term (optional)" />
         <% end %>
         <%= if @form[:type].value in ["custom"] do %>
-        <.input field={@form[:name]} type="text" label="Event title" />
+          <.input field={@form[:name]} type="text" label="Event title" />
         <% end %>
 
         <:actions>
@@ -60,22 +79,25 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
 
   @impl true
   def update(%{event: event} = assigns, socket) do
-    {:ok, socket
-    |> assign(assigns)
-    |> assign_new(:form, fn ->
-      to_form(Meetings.Event.changeset(event, %{}))
-    end)}
+    {:ok,
+     socket
+     |> assign(assigns)
+     |> assign_new(:form, fn ->
+       to_form(Meetings.Event.changeset(event, %{}))
+     end)}
   end
 
   def update(assigns, socket) do
     id = UUID.uuid4()
     fresh_event = %Meetings.Event{id: id, type: "opening-hymn"}
-    {:ok, socket
-    |> assign(assigns)
-    |> assign(:event, fresh_event)
-    |> assign_new(:form, fn ->
-      to_form(Meetings.Event.changeset(fresh_event, %{}))
-    end)}
+
+    {:ok,
+     socket
+     |> assign(assigns)
+     |> assign(:event, fresh_event)
+     |> assign_new(:form, fn ->
+       to_form(Meetings.Event.changeset(fresh_event, %{}))
+     end)}
   end
 
   @impl true
@@ -90,15 +112,47 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
 
   defp save_event(socket, :new_event, event_params) do
     cs = Event.changeset(socket.assigns.event, event_params)
+
     if cs.valid? do
       {:ok, e} = Ecto.Changeset.apply_action(cs, :edit)
-      e = e
-      |> Map.from_struct
-      |> Enum.map(fn {k, v} -> {Atom.to_string(k), v} end)
-      |> Enum.into(%{})
+
+      e =
+        e
+        |> Map.from_struct()
+        |> Enum.map(fn {k, v} -> {Atom.to_string(k), v} end)
+        |> Enum.into(%{})
 
       es = Map.get(socket.assigns.meeting, :events, %{"events" => []}) || %{"events" => []}
       save_meeting(socket, :edit, %{events: %{"events" => es["events"] ++ [e]}})
+    else
+      {:noreply, assign(socket, form: to_form(cs))}
+    end
+  end
+
+  defp save_event(socket, :edit_event, event_params) do
+    cs = Event.changeset(socket.assigns.event, event_params)
+
+    if cs.valid? do
+      {:ok, e} = Ecto.Changeset.apply_action(cs, :edit)
+
+      eid = e.id
+
+      e =
+        e
+        |> Map.from_struct()
+        |> Enum.map(fn {k, v} -> {Atom.to_string(k), v} end)
+        |> Enum.into(%{})
+
+      es = Map.get(socket.assigns.meeting, :events, %{"events" => []}) || %{"events" => []}
+
+      new_events =
+        es["events"]
+        |> Enum.map(fn
+          %{"id" => ^eid} -> e
+          x -> x
+        end)
+
+      save_meeting(socket, :edit, %{events: %{"events" => new_events}})
     else
       {:noreply, assign(socket, form: to_form(cs))}
     end
