@@ -34,16 +34,40 @@ defmodule RostrumWeb.MeetingLive.Show do
     >
       <:col :let={event}>
         <div class="flex flex-col">
-          <.button class="leading-3 py-2 px-1 mb-1" phx-click={JS.push("event-up", value: %{event: event})}>↑</.button>
-          <.button class="leading-3 py-2 px-1 mt-1" phx-click={JS.push("event-down", value: %{event: event})}>↓</.button>
+          <.button
+            class="leading-3 py-2 px-1 mb-1"
+            phx-click={JS.push("event-up", value: %{event: event})}
+          >
+            ↑
+          </.button>
+          <.button
+            class="leading-3 py-2 px-1 mt-1"
+            phx-click={JS.push("event-down", value: %{event: event})}
+          >
+            ↓
+          </.button>
 
-          <.link class="mt-1" style="margin-bottom: -30px; z-index:1" patch={~p"/meetings/#{@meeting}/show/event/new/after/#{event["id"]}"} phx-click={JS.push_focus()}>
-            <.button class="leading-3 py-2 px-3 bg-slate-50 hover:bg-slate-200 text-zinc-900 border-zinc-900 border-2">+</.button>
+          <.link
+            class="mt-1"
+            style="margin-bottom: -30px; z-index:1"
+            patch={~p"/meetings/#{@meeting}/show/event/new/after/#{event["id"]}"}
+            phx-click={JS.push_focus()}
+          >
+            <.button class="leading-3 py-2 px-3 bg-neutral-50 hover:bg-lime-400 hover:border-lime-900 text-zinc-900 border-zinc-900 border-2">
+              +
+            </.button>
           </.link>
         </div>
       </:col>
       <:col :let={event}><.render_event event={event} /></:col>
-      <:action :let={event}><.button phx-click={JS.push("event-delete", value: %{event: event})}>Delete</.button></:action>
+      <:action :let={event}>
+        <.button
+          class="text-red-700 bg-neutral-50 hover:bg-red-200 border-red-700 border-2"
+          phx-click={JS.push("event-delete", value: %{event: event})}
+        >
+          Delete
+        </.button>
+      </:action>
     </.table>
 
     <.link patch={~p"/meetings/#{@meeting}/show/event/new"} phx-click={JS.push_focus()}>
