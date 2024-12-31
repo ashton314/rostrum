@@ -32,14 +32,22 @@ defmodule RostrumWeb.MeetingLive.Show do
       rows={@es}
       row_click={fn e -> JS.navigate(~p|/meetings/#{meeting}/show/event/#{e["id"]}|) end}
     >
+      <:col :let={event}>
+        <div class="flex flex-col">
+          <.button class="leading-3 py-2 px-1 mb-1" phx-click={JS.push("event-up", value: %{event: event})}>↑</.button>
+          <.button class="leading-3 py-2 px-1 mt-1" phx-click={JS.push("event-down", value: %{event: event})}>↓</.button>
+
+          <.link class="mt-1" style="margin-bottom: -30px; z-index:1" patch={~p"/meetings/#{@meeting}/show/event/new/after/#{event["id"]}"} phx-click={JS.push_focus()}>
+            <.button class="leading-3 py-2 px-3 bg-slate-50 hover:bg-slate-200 text-zinc-900 border-zinc-900 border-2">+</.button>
+          </.link>
+        </div>
+      </:col>
       <:col :let={event}><.render_event event={event} /></:col>
-      <:action :let={event}><.button phx-click={JS.push("event-up", value: %{event: event})}>↑</.button></:action>
-      <:action :let={event}><.button phx-click={JS.push("event-down", value: %{event: event})}>↓</.button></:action>
       <:action :let={event}><.button phx-click={JS.push("event-delete", value: %{event: event})}>Delete</.button></:action>
     </.table>
 
     <.link patch={~p"/meetings/#{@meeting}/show/event/new"} phx-click={JS.push_focus()}>
-      <.button>+ Event</.button>
+      <.button class="mt-8">+ Event</.button>
     </.link>
     """
   end
@@ -124,11 +132,9 @@ defmodule RostrumWeb.MeetingLive.Show do
   defp update_events(socket, %{events: new_events}) do
     case Meetings.update_meeting(socket.assigns.meeting, %{events: %{"events" => new_events}}) do
       {:ok, meeting} ->
-        dbg(meeting)
         {:noreply, assign(socket |> put_flash(:info, "Updated"), :meeting, meeting)}
 
       {:error, cs} ->
-        dbg(cs)
         {:noreply, put_flash(socket, :error, "Unable to update meeting")}
     end
   end
@@ -139,19 +145,18 @@ defmodule RostrumWeb.MeetingLive.Show do
     meeting = socket.assigns.meeting
     {:ok, event} = Meetings.Meeting.fetch_event(meeting, event_id) |> Meetings.Event.from_map()
 
-    dbg(event)
-
     socket
     |> assign(:page_title, "Edit Event")
     |> assign(:event, event)
   end
 
-  defp apply_action(socket, :new_event, _params) do
+  defp apply_action(socket, :new_event, params) do
     id = UUID.uuid4()
 
     socket
     |> assign(:page_title, "New Event")
     |> assign(:event, %Meetings.Event{id: id, type: "opening-hymn"})
+    |> assign(:after_event_id, Map.get(params, "after_event_id", nil))
   end
 
   defp apply_action(socket, _, _params), do: socket

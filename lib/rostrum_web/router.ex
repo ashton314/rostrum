@@ -92,6 +92,7 @@ defmodule RostrumWeb.Router do
     live "/meetings/:id", MeetingLive.Show, :show
     live "/meetings/:id/show/edit", MeetingLive.Show, :edit
     live "/meetings/:id/show/event/new", MeetingLive.Show, :new_event
+    live "/meetings/:id/show/event/new/after/:after_event_id", MeetingLive.Show, :new_event
     live "/meetings/:id/show/event/:event_id", MeetingLive.Show, :edit_event
 
     live "/units", UnitLive.Index, :index
