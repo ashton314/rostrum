@@ -86,6 +86,16 @@ defmodule RostrumWeb.Router do
   scope "/", RostrumWeb do
     pipe_through [:browser, :require_authenticated_user]
 
+    live "/units", UnitLive.Index, :index
+    live "/units/new", UnitLive.Index, :new
+    live "/units/:id/edit", UnitLive.Index, :edit
+    live "/units/:id", UnitLive.Show, :show
+    live "/units/:id/show/edit", UnitLive.Show, :edit
+  end
+
+  scope "/", RostrumWeb do
+    pipe_through [:browser, :require_authenticated_user, :require_unit_user]
+
     live "/meetings", MeetingLive.Index, :index
     live "/meetings/new", MeetingLive.Index, :new
     live "/meetings/:id/edit", MeetingLive.Index, :edit
@@ -94,18 +104,6 @@ defmodule RostrumWeb.Router do
     live "/meetings/:id/show/event/new", MeetingLive.Show, :new_event
     live "/meetings/:id/show/event/new/after/:after_event_id", MeetingLive.Show, :new_event
     live "/meetings/:id/show/event/:event_id", MeetingLive.Show, :edit_event
-
-    live "/units", UnitLive.Index, :index
-    live "/units/new", UnitLive.Index, :new
-    live "/units/:id/edit", UnitLive.Index, :edit
-    live "/units/:id", UnitLive.Show, :show
-    live "/units/:id/show/edit", UnitLive.Show, :edit
-
-    # live "/meetings", MeetingLive.Index, :index
-    # live "/meetings/new", MeetingLive.Index, :new
-    # live "/meetings/:id/edit", MeetingLive.Index, :edit
-    # live "/meetings/:id", MeetingLive.Show, :show
-    # live "/meetings/:id/show/edit", MeetingLive.Show, :edit
 
     live "/calendar_events", CalendarEventLive.Index, :index
     live "/calendar_events/new", CalendarEventLive.Index, :new

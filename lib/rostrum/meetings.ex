@@ -7,18 +7,21 @@ defmodule Rostrum.Meetings do
   alias Rostrum.Repo
 
   alias Rostrum.Meetings.Meeting
+  alias Rostrum.Accounts.Unit
 
   @doc """
-  Returns the list of meetings.
+  Returns the list of meetings associated with a Unit.
 
   ## Examples
 
-      iex> list_meetings()
+      iex> list_meetings(%Unit{})
       [%Meeting{}, ...]
 
   """
-  def list_meetings do
-    Repo.all(Meeting)
+  def list_meetings(%Unit{} = unit) do
+    (from m in Meeting,
+          where: m.unit_id == ^unit.id)
+    |> Repo.all()
   end
 
   @doc """
@@ -35,7 +38,11 @@ defmodule Rostrum.Meetings do
       ** (Ecto.NoResultsError)
 
   """
-  def get_meeting!(id), do: Repo.get!(Meeting, id)
+  def get_meeting!(id, %Unit{} = unit) do
+    (from m in Meeting,
+          where: m.unit_id == ^unit.id and m.id == ^id)
+    |> Repo.one!()
+  end
 
   @doc """
   Creates a meeting.

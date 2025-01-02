@@ -93,6 +93,7 @@ defmodule RostrumWeb.UserAuth do
   def fetch_current_user(conn, _opts) do
     {user_token, conn} = ensure_user_token(conn)
     user = user_token && Accounts.get_user_by_session_token(user_token)
+    user = user && Accounts.load_units(user)
     assign(conn, :current_user, user)
   end
 
@@ -213,6 +214,20 @@ defmodule RostrumWeb.UserAuth do
     end
   end
 
+  @doc """
+  Requires that a user have an associated %Unit{}.
+  """
+  def require_unit_user(conn, _opts) do
+    if conn.assigns[:current_user] && is_list(conn.assigns[:current_user].units) &&
+         length(conn.assigns[:current_user].units) > 0 do
+    else
+      conn
+      |> put_flash(:error, "You must be associated with a unit before proceeding.")
+      |> redirect(to: ~p"/units/new")
+      |> halt()
+    end
+  end
+
   defp put_token_in_session(conn, token) do
     conn
     |> put_session(:user_token, token)
@@ -225,5 +240,5 @@ defmodule RostrumWeb.UserAuth do
 
   defp maybe_store_return_to(conn), do: conn
 
-  defp signed_in_path(_conn), do: ~p"/"
+  defp signed_in_path(_conn), do: ~p"/meetings"
 end
