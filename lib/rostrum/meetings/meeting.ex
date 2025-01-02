@@ -6,7 +6,7 @@ defmodule Rostrum.Meetings.Meeting do
     field :date, :date
     field :events, :map
     field :metadata, :map
-    field :title, :string, default: "Sacrament Meeting"
+    field :title, :string, default: "Sacrament Meeting Program"
     belongs_to :unit, Rostrum.Accounts.Unit
 
     timestamps(type: :utc_datetime)

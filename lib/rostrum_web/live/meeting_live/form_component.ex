@@ -19,6 +19,7 @@ defmodule RostrumWeb.MeetingLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
+        <.input field={@form[:title]} type="text" label="Meeting Title" placeholder="e.g. Fast and Testimony Meeting"/>
         <.input field={@form[:date]} type="date" label="Date" />
 
         <:actions>

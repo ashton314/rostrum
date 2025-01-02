@@ -2,7 +2,6 @@
 
 <.header>
   Meeting <.format_date date={@meeting.date} />
-  <:subtitle>This is a meeting record from your database.</:subtitle>
   <:actions>
     <.link patch={~p"/meetings/#{@meeting}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit meeting</.button>
@@ -11,8 +10,8 @@
 </.header>
 
 <.list>
+  <:item title="Title">{@meeting.title}</:item>
   <:item title="Date">{@meeting.date}</:item>
-  <:item title="Metadata">{@meeting.metadata}</:item>
 </.list>
 
 <.events_editor meeting={@meeting} />

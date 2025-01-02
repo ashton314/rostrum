@@ -551,13 +551,14 @@ defmodule RostrumWeb.CoreComponents do
     type_to_name = %{
       "opening-hymn" => "Opening Hymn",
       "closing-hymn" => "Closing Hymn",
+      "sacrament-hymn" => "Sacrament Hymn",
       "rest-hymn" => "Rest Hymn",
       "hymn" => "Hymn",
       "musical-number" => "Musical number",
       "speaker" => "Speaker",
       "opening-prayer" => "Invocation",
       "closing-prayer" => "Benediction",
-      "sacrament" => "Sacrament",
+      "sacrament" => "Administration of the Sacrament",
       "baby-blessing" => "Baby blessing",
       "announcements" => "Announcements",
       "ward-business" => "Ward Business",
@@ -571,6 +572,8 @@ defmodule RostrumWeb.CoreComponents do
       |> assign(:name, type_to_name[assigns.event["type"]])
       |> assign(:verses, assigns.event["verses"])
 
+    dbg(assigns)
+
     ~H"""
     <div class="program-event">
       <%= if @event["type"] in ["opening-prayer", "closing-prayer", "speaker"] do %>
@@ -580,13 +583,13 @@ defmodule RostrumWeb.CoreComponents do
         </div>
       <% end %>
 
-      <%= if @event["type"] in ["opening-hymn", "closing-hymn", "rest-hymn", "hymn"] do %>
+      <%= if @event["type"] in ["opening-hymn", "closing-hymn", "rest-hymn", "sacrament-hymn", "hymn"] do %>
         <div class="hymn">
           <h5>{@event["term"] || @name}</h5>
           <span class="hymn-number">{@event["number"]}</span><span class="hymn-name"><%= Rostrum.Meetings.Event.hymn_name(@event["number"]) %></span>
         </div>
         <%= if @verses do %>
-          <span class="hymn-verses">{@verses}</span>
+          <span class="hymn-verses">Verses {@verses}</span>
         <% end %>
       <% end %>
 
@@ -595,8 +598,12 @@ defmodule RostrumWeb.CoreComponents do
         {@event["Performer"]}
       <% end %>
 
+      <%= if @event["type"] in ["sacrament", "baby-blessing", "announcements", "ward-business", "stake-business", "ward-stake-business"] do %>
+        <h4>{@name}</h4>
+      <% end %>
+
       <%= if @event["type"] in ["custom"] do %>
-        {@event["name"]}
+        <h4>{@event["name"]}</h4>
       <% end %>
     </div>
     """
