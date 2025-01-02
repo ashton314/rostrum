@@ -1,6 +1,6 @@
+<.back navigate={~p"/units"}>Back to units</.back>
 <.header>
-  Unit {@unit.id}
-  <:subtitle>This is a unit record from your database.</:subtitle>
+  {@unit.name}
   <:actions>
     <.link patch={~p"/units/#{@unit}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit unit</.button>
@@ -10,9 +10,14 @@
 
 <.list>
   <:item title="Name">{@unit.name}</:item>
+  <:item title="Slug">{@unit.slug}</:item>
 </.list>
-
-<.back navigate={~p"/units"}>Back to units</.back>
+<h2 class="mt-12 font-semibold leading-8">Users associated with this unit</h2>
+<.table
+  id="users"
+  rows={@streams.users}>
+  <:col :let={{_id, user}} label="Email">{user.email}</:col>
+</.table>
 
 <.modal :if={@live_action == :edit} id="unit-modal" show on_cancel={JS.patch(~p"/units/#{@unit}")}>
   <.live_component
@@ -21,6 +26,7 @@
     title={@page_title}
     action={@live_action}
     unit={@unit}
+    current_user={@current_user}
     patch={~p"/units/#{@unit}"}
   />
 </.modal>

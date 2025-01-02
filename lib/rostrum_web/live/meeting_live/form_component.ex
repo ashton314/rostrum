@@ -9,7 +9,7 @@ defmodule RostrumWeb.MeetingLive.FormComponent do
     <div>
       <.header>
         {@title}
-        <:subtitle>Use this form to manage meeting records in your database.</:subtitle>
+        <:subtitle>Meeting for {@current_unit.name}</:subtitle>
       </.header>
 
       <.simple_form
@@ -65,7 +65,9 @@ defmodule RostrumWeb.MeetingLive.FormComponent do
   end
 
   defp save_meeting(socket, :new, meeting_params) do
-    case Meetings.create_meeting(meeting_params) do
+    unit = socket.assigns.current_unit
+    meeting_params = Map.put(meeting_params, "unit_id", unit.id)
+    case dbg(Meetings.create_meeting(meeting_params)) do
       {:ok, meeting} ->
         notify_parent({:saved, meeting})
 

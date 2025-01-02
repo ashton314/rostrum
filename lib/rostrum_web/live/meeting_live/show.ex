@@ -10,11 +10,10 @@ defmodule RostrumWeb.MeetingLive.Show do
 
   @impl true
   def handle_params(%{"id" => id} = params, _, socket) do
-    dbg(socket)
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:meeting, Meetings.get_meeting!(id))
+     |> assign(:meeting, Meetings.get_meeting!(id, socket.assigns.current_unit))
      |> apply_action(socket.assigns.live_action, params)}
   end
 
@@ -54,7 +53,7 @@ defmodule RostrumWeb.MeetingLive.Show do
             patch={~p"/meetings/#{@meeting}/show/event/new/after/#{event["id"]}"}
             phx-click={JS.push_focus()}
           >
-            <.button class="leading-3 py-2 px-3 bg-neutral-50 hover:bg-lime-400 hover:border-lime-900 text-zinc-900 border-zinc-900 border-2">
+            <.button class="leading-3 py-2 px-3 bg-zinc-50 hover:bg-green-400 hover:border-lime-900 text-zinc-900 border-zinc-900 border-2">
               +
             </.button>
           </.link>
@@ -63,7 +62,7 @@ defmodule RostrumWeb.MeetingLive.Show do
       <:col :let={event}><.render_event event={event} /></:col>
       <:action :let={event}>
         <.button
-          class="text-red-700 bg-neutral-50 hover:bg-red-200 border-red-700 border-2"
+          class="text-red-800 bg-zinc-50 hover:bg-red-100 border-red-700 border-2"
           phx-click={JS.push("event-delete", value: %{event: event})}
         >
           Delete
@@ -74,55 +73,6 @@ defmodule RostrumWeb.MeetingLive.Show do
     <.link patch={~p"/meetings/#{@meeting}/show/event/new"} phx-click={JS.push_focus()}>
       <.button class="mt-8">+ Event</.button>
     </.link>
-    """
-  end
-
-  def render_event(assigns) do
-    type_to_name = %{
-      "opening-hymn" => "Opening Hymn",
-      "closing-hymn" => "Closing Hymn",
-      "rest-hymn" => "Rest Hymn",
-      "hymn" => "Hymn",
-      "musical-number" => "Musical number",
-      "speaker" => "Speaker",
-      "opening-prayer" => "Invocation",
-      "closing-prayer" => "Benediction",
-      "sacrament" => "Sacrament",
-      "baby-blessing" => "Baby blessing",
-      "announcements" => "Announcements",
-      "ward-business" => "Ward Business",
-      "stake-business" => "Stake Business",
-      "ward-stake-business" => "Ward & Stake Business",
-      "custom" => "Custom"
-    }
-
-    assigns =
-      assigns
-      |> assign(:name, type_to_name[assigns.event["type"]])
-      |> assign(:verses, assigns.event["verses"])
-
-    ~H"""
-    <div class="py-2 font-normal">
-      <div class="text-sm capitalize font-semibold">{@event["term"] || @name}</div>
-      <%= if @event["type"] in ["opening-hymn", "closing-hymn", "rest-hymn", "hymn"] do %>
-        <div>
-          <span class="mr-1">{@event["number"]}</span><span class="italic"><%= Meetings.Event.hymn_name(@event["number"]) %></span>
-        </div>
-        <%= if @verses do %>
-          <span>{@verses}</span>
-        <% end %>
-      <% end %>
-      <%= if @event["type"] in ["musical-number"] do %>
-        {@event["name"]}
-        {@event["Performer"]}
-      <% end %>
-      <%= if @event["type"] in ["opening-prayer", "closing-prayer", "speaker"] do %>
-        {@event["name"]}
-      <% end %>
-      <%= if @event["type"] in ["custom"] do %>
-        {@event["name"]}
-      <% end %>
-    </div>
     """
   end
 

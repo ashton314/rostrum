@@ -19,7 +19,8 @@ defmodule RostrumWeb.UnitLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:name]} type="text" label="Name" />
+        <.input field={@form[:name]} type="text" label="Name" placeholder="e.g. Netherfield 5th Ward" />
+        <.input field={@form[:slug]} type="text" label="Slug" placeholder="e.g. netherfield-5th-ward" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Unit</.button>
         </:actions>
@@ -66,7 +67,7 @@ defmodule RostrumWeb.UnitLive.FormComponent do
   defp save_unit(socket, :new, unit_params) do
     case Accounts.create_unit(unit_params) do
       {:ok, unit} ->
-        notify_parent({:saved, unit})
+        notify_parent({:saved_new, unit})
 
         {:noreply,
          socket

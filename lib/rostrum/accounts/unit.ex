@@ -13,8 +13,9 @@ defmodule Rostrum.Accounts.Unit do
   @doc false
   def changeset(unit, attrs) do
     unit
-    |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> cast(attrs, [:name, :slug])
+    |> validate_required([:name, :slug])
+    |> validate_format(:slug, ~r/[a-zA-Z0-9-]/, message: "may only contain letters, digits, and dashes")
     |> unsafe_validate_unique(:slug, Rostrum.Repo)
     |> unique_constraint(:slug)
   end

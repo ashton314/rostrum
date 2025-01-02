@@ -6,7 +6,8 @@ defmodule Rostrum.Accounts do
   import Ecto.Query, warn: false
   alias Rostrum.Repo
 
-  alias Rostrum.Accounts.{User, UserToken, UserNotifier}
+  alias Rostrum.Accounts.{User, UserToken, UserNotifier, Unit, UserUnit}
+  alias Rostrum.Meetings.Meeting
 
   ## Database getters
 
@@ -382,6 +383,11 @@ defmodule Rostrum.Accounts do
   """
   def get_unit!(id), do: Repo.get!(Unit, id)
 
+  def get_unit_by_slug(slug) do
+    (from u in Unit, where: u.slug == ^slug)
+    |> Repo.one()
+  end
+
   @doc """
   Creates a unit.
 
@@ -466,14 +472,28 @@ defmodule Rostrum.Accounts do
     |> Map.get(:users)
   end
 
+  def load_users(%Unit{} = unit) do
+    unit |> Repo.preload(:users)
+  end
+
   def add_user_to_unit(user_id, unit_id) do
     user = Repo.get(User, user_id)
     unit = Repo.get(Unit, unit_id)
 
-    user
-    |> Repo.preload(:units)
-    |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:units, [unit | user.units])
-    |> Repo.update()
+    Repo.insert(%UserUnit{user_id: user.id, unit_id: unit.id})
+  end
+
+  def get_active_meeting(%Unit{} = unit) do
+    (from m in Meeting,
+         where: m.unit_id == ^unit.id,
+         order_by: m.date,
+         limit: 1)
+    |> Repo.one()
+  end
+
+  def find_meeting_by_slug(slug) do
+    with %Unit{} = unit <- get_unit_by_slug(slug) do
+      get_active_meeting(unit)
+    end
   end
 end

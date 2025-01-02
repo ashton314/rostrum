@@ -37,6 +37,11 @@ defmodule RostrumWeb.UnitLive.Index do
     {:noreply, stream_insert(socket, :units, unit)}
   end
 
+  def handle_info({RostrumWeb.UnitLive.FormComponent, {:saved_new, unit}}, socket) do
+    Accounts.add_user_to_unit(socket.assigns.current_user.id, unit.id)
+    {:noreply, stream_insert(socket, :units, unit)}
+  end
+
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     unit = Accounts.get_unit!(id)

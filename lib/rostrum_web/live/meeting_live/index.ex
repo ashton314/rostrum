@@ -6,7 +6,7 @@ defmodule RostrumWeb.MeetingLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :meetings, Meetings.list_meetings())}
+    {:ok, stream(socket, :meetings, Meetings.list_meetings(socket.assigns.current_unit))}
   end
 
   @impl true
@@ -17,7 +17,7 @@ defmodule RostrumWeb.MeetingLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Meeting")
-    |> assign(:meeting, Meetings.get_meeting!(id))
+    |> assign(:meeting, Meetings.get_meeting!(id, socket.assigns.current_unit))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -39,7 +39,7 @@ defmodule RostrumWeb.MeetingLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    meeting = Meetings.get_meeting!(id)
+    meeting = Meetings.get_meeting!(id, socket.assigns.current_unit)
     {:ok, _} = Meetings.delete_meeting(meeting)
 
     {:noreply, stream_delete(socket, :meetings, meeting)}

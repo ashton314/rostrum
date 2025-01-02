@@ -3,6 +3,7 @@ defmodule RostrumWeb.UserAuth do
 
   import Plug.Conn
   import Phoenix.Controller
+  import Phoenix.Component, only: [assign_new: 3]
 
   alias Rostrum.Accounts
 
@@ -94,7 +95,9 @@ defmodule RostrumWeb.UserAuth do
     {user_token, conn} = ensure_user_token(conn)
     user = user_token && Accounts.get_user_by_session_token(user_token)
     user = user && Accounts.load_units(user)
-    assign(conn, :current_user, user)
+    conn
+    |> assign(:current_user, user)
+    |> assign(:current_unit, user && user.units && length(user.units) > 0 && List.first(user.units))
   end
 
   defp ensure_user_token(conn) do
@@ -175,6 +178,28 @@ defmodule RostrumWeb.UserAuth do
     end
   end
 
+  def on_mount(:default, _params, %{"user_token" => user_token} = _session, socket) do
+    socket =
+      socket
+      |> assign_new(:current_user, fn ->
+        Accounts.get_user_by_session_token(user_token)
+      end)
+      |> assign_new(:current_unit, fn %{current_user: u} ->
+        u
+        |> Accounts.load_units()
+        |> then(fn %{units: []} -> nil
+                   %{units: [h | _]} -> h end)
+      end)
+
+    if socket.assigns.current_user do
+      {:cont, socket}
+    else
+      {:halt, redirect(socket, to: "/login")}
+    end
+  end
+
+  def on_mount(:default, _params, _session, socket), do: {:cont, socket}
+
   defp mount_current_user(socket, session) do
     Phoenix.Component.assign_new(socket, :current_user, fn ->
       if user_token = session["user_token"] do
@@ -218,8 +243,19 @@ defmodule RostrumWeb.UserAuth do
   Requires that a user have an associated %Unit{}.
   """
   def require_unit_user(conn, _opts) do
-    if conn.assigns[:current_user] && is_list(conn.assigns[:current_user].units) &&
-         length(conn.assigns[:current_user].units) > 0 do
+    dbg(conn.assigns)
+    if conn.assigns[:current_user] do
+      user = conn.assigns[:current_user] |> Accounts.load_units()
+      if is_list(user.units) && length(user.units) > 0 do
+        conn
+        |> assign(:current_user, user)
+        |> assign(:current_unit, user.units |> Enum.at(0))
+      else
+        conn
+        |> put_flash(:error, "You must be associated with a unit before proceeding.")
+        |> redirect(to: ~p"/units/new")
+        |> halt()
+      end
     else
       conn
       |> put_flash(:error, "You must be associated with a unit before proceeding.")

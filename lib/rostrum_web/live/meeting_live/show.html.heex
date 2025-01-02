@@ -1,5 +1,7 @@
+<.back navigate={~p"/meetings"}>Back to meetings</.back>
+
 <.header>
-  Meeting {@meeting.id}
+  Meeting <.format_date date={@meeting.date} />
   <:subtitle>This is a meeting record from your database.</:subtitle>
   <:actions>
     <.link patch={~p"/meetings/#{@meeting}/show/edit"} phx-click={JS.push_focus()}>
@@ -15,8 +17,6 @@
 
 <.events_editor meeting={@meeting} />
 
-<.back navigate={~p"/meetings"}>Back to meetings</.back>
-
 <.modal :if={@live_action == :edit} id="meeting-modal" show on_cancel={JS.patch(~p"/meetings/#{@meeting}")}>
   <.live_component
     module={RostrumWeb.MeetingLive.FormComponent}
@@ -24,6 +24,7 @@
     title={@page_title}
     action={@live_action}
     meeting={@meeting}
+    current_unit={@current_unit}
     patch={~p"/meetings/#{@meeting}"}
   />
 </.modal>

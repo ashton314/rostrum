@@ -6,7 +6,8 @@ defmodule Rostrum.Meetings.Meeting do
     field :date, :date
     field :events, :map
     field :metadata, :map
-    field :unit_id, :id
+    field :title, :string, default: "Sacrament Meeting"
+    belongs_to :unit, Rostrum.Accounts.Unit
 
     timestamps(type: :utc_datetime)
   end
@@ -14,8 +15,8 @@ defmodule Rostrum.Meetings.Meeting do
   @doc false
   def changeset(meeting, attrs) do
     meeting
-    |> cast(attrs, [:date, :metadata, :events])
-    |> validate_required([:date])
+    |> cast(attrs, [:date, :metadata, :events, :title, :unit_id])
+    |> validate_required([:date, :unit_id])
   end
 
   def patch_event(meeting, event_id, new_event) do

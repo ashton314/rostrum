@@ -55,6 +55,7 @@ defmodule RostrumWeb do
       use Phoenix.LiveView,
         layout: {RostrumWeb.Layouts, :app}
 
+      on_mount RostrumWeb.UserAuth
       unquote(html_helpers())
     end
   end

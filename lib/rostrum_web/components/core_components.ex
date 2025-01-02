@@ -546,6 +546,62 @@ defmodule RostrumWeb.CoreComponents do
     """
   end
 
+  attr :event, :any, required: true
+  def render_event(assigns) do
+    type_to_name = %{
+      "opening-hymn" => "Opening Hymn",
+      "closing-hymn" => "Closing Hymn",
+      "rest-hymn" => "Rest Hymn",
+      "hymn" => "Hymn",
+      "musical-number" => "Musical number",
+      "speaker" => "Speaker",
+      "opening-prayer" => "Invocation",
+      "closing-prayer" => "Benediction",
+      "sacrament" => "Sacrament",
+      "baby-blessing" => "Baby blessing",
+      "announcements" => "Announcements",
+      "ward-business" => "Ward Business",
+      "stake-business" => "Stake Business",
+      "ward-stake-business" => "Ward & Stake Business",
+      "custom" => "Custom"
+    }
+
+    assigns =
+      assigns
+      |> assign(:name, type_to_name[assigns.event["type"]])
+      |> assign(:verses, assigns.event["verses"])
+
+    ~H"""
+    <div class="program-event">
+      <%= if @event["type"] in ["opening-prayer", "closing-prayer", "speaker"] do %>
+        <div class="prayer">
+          <h5>{@event["term"] || @name}</h5>
+          {@event["name"]}
+        </div>
+      <% end %>
+
+      <%= if @event["type"] in ["opening-hymn", "closing-hymn", "rest-hymn", "hymn"] do %>
+        <div class="hymn">
+          <h5>{@event["term"] || @name}</h5>
+          <span class="hymn-number">{@event["number"]}</span><span class="hymn-name"><%= Rostrum.Meetings.Event.hymn_name(@event["number"]) %></span>
+        </div>
+        <%= if @verses do %>
+          <span class="hymn-verses">{@verses}</span>
+        <% end %>
+      <% end %>
+
+      <%= if @event["type"] in ["musical-number"] do %>
+        {@event["name"]}
+        {@event["Performer"]}
+      <% end %>
+
+      <%= if @event["type"] in ["custom"] do %>
+        {@event["name"]}
+      <% end %>
+    </div>
+    """
+  end
+
   @doc """
   Renders a back navigation link.
 
@@ -558,7 +614,7 @@ defmodule RostrumWeb.CoreComponents do
 
   def back(assigns) do
     ~H"""
-    <div class="mt-16">
+    <div>
       <.link
         navigate={@navigate}
         class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
@@ -568,6 +624,21 @@ defmodule RostrumWeb.CoreComponents do
       </.link>
     </div>
     """
+  end
+
+  attr :date, :any, required: true
+  def format_date(assigns) do
+    with {:ok, fmtd} <- Timex.format(assigns.date, "%A, %B %d, %Y", :strftime) do
+      assigns = assign(assigns, :fmtd, fmtd)
+      ~H"""
+      {@fmtd}
+      """
+    else
+      _ ->
+        ~H"""
+        {@date}
+        """
+    end
   end
 
   @doc """

@@ -1,0 +1,6 @@
+<h1 class="header title">{@meeting.title}</h1>
+<h2 class="header">{@meeting.unit.name}</h2>
+
+<div :for={event <- @meeting.events["events"]}>
+  <.render_event event={event} />
+</div>

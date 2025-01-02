@@ -21,6 +21,7 @@ defmodule RostrumWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/meeting/:unit_slug", PageController, :meeting_render
   end
 
   # Other scopes may use custom stacks.
