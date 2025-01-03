@@ -7,6 +7,12 @@ defmodule Rostrum.Meetings.Meeting do
     field :events, :map
     field :metadata, :map
     field :title, :string, default: "Sacrament Meeting Program"
+    field :presiding, :string
+    field :conducting, :string
+    field :accompanist, :string
+    field :accompanist_term, :string, default: "Organist"
+    field :chorister, :string
+    field :welcome_blurb, :string, default: ""
     belongs_to :unit, Rostrum.Accounts.Unit
 
     timestamps(type: :utc_datetime)
@@ -15,7 +21,19 @@ defmodule Rostrum.Meetings.Meeting do
   @doc false
   def changeset(meeting, attrs) do
     meeting
-    |> cast(attrs, [:date, :metadata, :events, :title, :unit_id])
+    |> cast(attrs, [
+      :date,
+      :metadata,
+      :events,
+      :title,
+      :unit_id,
+      :presiding,
+      :conducting,
+      :accompanist,
+      :accompanist_term,
+      :welcome_blurb,
+      :chorister
+    ])
     |> validate_required([:date, :unit_id])
   end
 
@@ -48,8 +66,10 @@ defmodule Rostrum.Meetings.Meeting do
 
     new_events =
       events
-      |> Enum.reject(fn %{"id" => ^event_id} -> true
-                        _ -> false end)
+      |> Enum.reject(fn
+        %{"id" => ^event_id} -> true
+        _ -> false
+      end)
 
     %{events: new_events}
   end

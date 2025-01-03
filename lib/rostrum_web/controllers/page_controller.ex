@@ -19,7 +19,7 @@ defmodule RostrumWeb.PageController do
       %Rostrum.Meetings.Meeting{} = m ->
         m = m |> Rostrum.Repo.preload([:unit])
         conn
-        |> assign(:meeting, dbg(m))
+        |> assign(:meeting, m)
         |> put_root_layout(html: :meeting_root)
         |> put_layout(html: :meeting)
         |> render(:meeting)

@@ -6,6 +6,11 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
 
   @impl true
   def render(assigns) do
+    dat = Meetings.Event.hymn_name(assigns.form[:number].value)
+    assigns =
+      assigns
+      |> assign(:hymn_name, (if is_map(dat), do: dat.name, else: "Invalid"))
+
     ~H"""
     <div>
       <.header>
@@ -47,7 +52,7 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
         />
         <%= if @form[:type].value in ["opening-hymn", "closing-hymn", "sacrament-hymn", "rest-hymn", "hymn"] do %>
           <.input field={@form[:number]} type="number" label="Hymn number" />
-          {Meetings.Event.hymn_name(@form[:number].value)}
+          {@hymn_name}
           <.input
             field={@form[:verses]}
             type="text"

@@ -570,9 +570,14 @@ defmodule RostrumWeb.CoreComponents do
     assigns =
       assigns
       |> assign(:name, type_to_name[assigns.event["type"]])
-      |> assign(:verses, assigns.event["verses"])
+      |> assign(:verses, format_verses(assigns.event["verses"]))
 
-    dbg(assigns)
+    assigns =
+      if assigns.event["type"] in ["opening-hymn", "closing-hymn", "rest-hymn", "sacrament-hymn", "hymn"] do
+        assign(assigns, :hymn_data, Rostrum.Meetings.Event.hymn_name(assigns.event["number"]))
+      else
+        assigns
+      end
 
     ~H"""
     <div class="program-event">
@@ -586,10 +591,15 @@ defmodule RostrumWeb.CoreComponents do
       <%= if @event["type"] in ["opening-hymn", "closing-hymn", "rest-hymn", "sacrament-hymn", "hymn"] do %>
         <div class="hymn">
           <h5>{@event["term"] || @name}</h5>
-          <span class="hymn-number">{@event["number"]}</span><span class="hymn-name"><%= Rostrum.Meetings.Event.hymn_name(@event["number"]) %></span>
+          <span class="hymn-number">{@event["number"]}</span><span class="hymn-name">{@hymn_data.name}</span>
+          <span class="hymn-links">
+            <span :if={@hymn_data.url != ""} class="hymn-link"><a href="{@hymn_data.url}">open music</a></span>
+            <span :if={@hymn_data.url != "" && @hymn_data.pdf != ""} class="hymn-link-sep">◊</span>
+            <span :if={@hymn_data.pdf != ""} class="hymn-link"><a href="{@hymn_data.pdf}">open as PDF</a></span>
+          </span>
         </div>
         <%= if @verses do %>
-          <span class="hymn-verses">Verses {@verses}</span>
+          <span class="hymn-verses">{@verses}</span>
         <% end %>
       <% end %>
 
@@ -607,6 +617,22 @@ defmodule RostrumWeb.CoreComponents do
       <% end %>
     </div>
     """
+  end
+
+  defp format_verses(""), do: nil
+  defp format_verses(nil), do: nil
+  defp format_verses(verse_string) do
+    digits =
+      Regex.scan(~r/\d+/, verse_string)
+      |> List.flatten()
+      |> Enum.map(&String.to_integer/1)
+
+    case digits do
+      [] -> verse_string
+      [v] -> "Verse #{v}"
+      [v1, v2] -> "Verses #{v1} and #{v2}"
+      vs -> "Verses #{Enum.join(Enum.take(vs, length(vs) - 1), ", ")}, and #{List.last(vs)}"
+    end
   end
 
   @doc """

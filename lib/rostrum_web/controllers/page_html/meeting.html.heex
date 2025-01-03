@@ -1,6 +1,32 @@
 <h1 class="header title">{@meeting.title}</h1>
 <h2 class="header">{@meeting.unit.name}</h2>
 
+<div :if={@meeting.welcome_blurb} class="welcome-blurb">{@meeting.welcome_blurb}</div>
+
+<div class="meeting-org">
+  <div class="leadership">
+    <div :if={@meeting.presiding}>
+      <h5>Presiding</h5>
+      {@meeting.presiding}
+    </div>
+    <div :if={@meeting.conducting}>
+      <h5>Conducting</h5>
+      {@meeting.conducting}
+    </div>
+  </div>
+
+  <div class="music">
+    <div :if={@meeting.chorister}>
+      <h5>Chorister</h5>
+      {@meeting.chorister}
+    </div>
+    <div :if={@meeting.accompanist}>
+      <h5>{@meeting.accompanist_term}</h5>
+      {@meeting.accompanist}
+    </div>
+  </div>
+</div>
+
 <h3>Program</h3>
 
 <div :for={event <- @meeting.events["events"]}>
