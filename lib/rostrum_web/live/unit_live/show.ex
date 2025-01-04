@@ -10,7 +10,9 @@ defmodule RostrumWeb.UnitLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    unit = Accounts.get_unit!(id)
+    user = socket.assigns.current_user
+    dbg(user)
+    unit = Accounts.get_unit!(id, user)
     users = Accounts.get_users_for_unit(id)
     {:noreply,
      socket
@@ -21,4 +23,5 @@ defmodule RostrumWeb.UnitLive.Show do
 
   defp page_title(:show), do: "Show Unit"
   defp page_title(:edit), do: "Edit Unit"
+  defp page_title(:add_user), do: "Add User to Unit"
 end

@@ -50,7 +50,8 @@ defmodule RostrumWeb.UnitLive.FormComponent do
   end
 
   defp save_unit(socket, :edit, unit_params) do
-    case Accounts.update_unit(socket.assigns.unit, unit_params) do
+    dbg(socket.assigns.current_user)
+    case Accounts.update_unit(socket.assigns.unit, socket.assigns.current_user, unit_params) do
       {:ok, unit} ->
         notify_parent({:saved, unit})
 

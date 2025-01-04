@@ -6,7 +6,7 @@ defmodule RostrumWeb.UnitLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :units, Accounts.list_units())}
+    {:ok, stream(socket, :units, Accounts.list_units(socket.assigns.current_user))}
   end
 
   @impl true
@@ -17,7 +17,7 @@ defmodule RostrumWeb.UnitLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Unit")
-    |> assign(:unit, Accounts.get_unit!(id))
+    |> assign(:unit, Accounts.get_unit!(id, socket.asigns.current_user))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -44,8 +44,8 @@ defmodule RostrumWeb.UnitLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    unit = Accounts.get_unit!(id)
-    {:ok, _} = Accounts.delete_unit(unit)
+    unit = Accounts.get_unit!(id, socket.assigns.current_user)
+    {:ok, _} = Accounts.delete_unit(unit, socket.assigns.current_user)
 
     {:noreply, stream_delete(socket, :units, unit)}
   end

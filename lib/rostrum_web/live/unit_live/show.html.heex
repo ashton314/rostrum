@@ -12,16 +12,45 @@
   <:item title="Name">{@unit.name}</:item>
   <:item title="Slug">{@unit.slug}</:item>
 </.list>
-<h2 class="mt-12 font-semibold leading-8">Users associated with this unit</h2>
+
+<.subheader>
+  Users associated with this unit
+  <:actions>
+    <.link patch={~p"/units/#{@unit}/show/add_user"} phx-click={JS.push_focus()}>
+      <.button>Add user to unit</.button>
+    </.link>
+  </:actions>
+</.subheader>
+
 <.table
   id="users"
   rows={@streams.users}>
   <:col :let={{_id, user}} label="Email">{user.email}</:col>
+  <:action :let={{id, user}}>
+    <.button
+      class="text-red-800 bg-red-50 hover:bg-red-100 border-red-700 border-2"
+      phx-click={JS.push("boot_user", value: %{user: user.id}) |> hide("##{id}")}
+      data-confirm="Really remove user from unit?">
+      Remove from unit
+    </.button>
+  </:action>
 </.table>
 
 <.modal :if={@live_action == :edit} id="unit-modal" show on_cancel={JS.patch(~p"/units/#{@unit}")}>
   <.live_component
     module={RostrumWeb.UnitLive.FormComponent}
+    id={@unit.id}
+    title={@page_title}
+    action={@live_action}
+    unit={@unit}
+    current_user={@current_user}
+    patch={~p"/units/#{@unit}"}
+  />
+</.modal>
+
+<.modal :if={@live_action == :add_user} id="add-user-modal" show on_cancel={JS.patch(~p"/units/#{@unit}")}>
+  <.live_component
+    module={RostrumWeb.UnitLive.AddUserComponent}
     id={@unit.id}
     title={@page_title}
     action={@live_action}

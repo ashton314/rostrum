@@ -92,6 +92,7 @@ defmodule RostrumWeb.Router do
     live "/units/:id/edit", UnitLive.Index, :edit
     live "/units/:id", UnitLive.Show, :show
     live "/units/:id/show/edit", UnitLive.Show, :edit
+    live "/units/:id/show/add_user", UnitLive.Show, :add_user
   end
 
   scope "/", RostrumWeb do

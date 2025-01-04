@@ -363,8 +363,10 @@ defmodule Rostrum.Accounts do
       [%Unit{}, ...]
 
   """
-  def list_units do
-    Repo.all(Unit)
+  def list_units(%User{} = user) do
+    user
+    |> Repo.preload(:units)
+    |> Map.get(:units)
   end
 
   @doc """
@@ -381,11 +383,29 @@ defmodule Rostrum.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_unit!(id), do: Repo.get!(Unit, id)
+  def get_unit!(id, %User{} = user) do
+    assert_user_access_unit!(user, id)
+    Repo.get!(Unit, id)
+  end
 
   def get_unit_by_slug(slug) do
     (from u in Unit, where: u.slug == ^slug)
     |> Repo.one()
+  end
+
+  def can_see_unit?(%User{} = user, unit_id) do
+    user
+    |> Repo.preload(:units)
+    |> Map.get(:units)
+    |> Enum.any?(fn %Unit{id: id} -> to_string(id) == to_string(unit_id) end)
+  end
+
+  def assert_user_access_unit!(%User{} = user, unit_id) do
+    if can_see_unit?(user, unit_id) do
+      :ok
+    else
+      raise Ecto.NoResultsError
+    end
   end
 
   @doc """
@@ -418,7 +438,8 @@ defmodule Rostrum.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_unit(%Unit{} = unit, attrs) do
+  def update_unit(%Unit{} = unit, %User{} = user, attrs) do
+    assert_user_access_unit!(user, unit.id)
     unit
     |> Unit.changeset(attrs)
     |> Repo.update()
@@ -436,7 +457,8 @@ defmodule Rostrum.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_unit(%Unit{} = unit) do
+  def delete_unit(%Unit{} = unit, %User{} = user) do
+    assert_user_access_unit!(user, unit.id)
     Repo.delete(unit)
   end
 
@@ -481,6 +503,18 @@ defmodule Rostrum.Accounts do
     unit = Repo.get(Unit, unit_id)
 
     Repo.insert(%UserUnit{user_id: user.id, unit_id: unit.id})
+  end
+
+  def add_user_to_unit_by_email(%Unit{} = unit, user_email) do
+    with %User{id: user_id} <- get_user_by_email(user_email) do
+      add_user_to_unit(user_id, unit.id)
+    end
+  end
+
+  def remove_user_from_unit(%Unit{} = unit, %User{} = user) do
+    (from a in UserUnit,
+          where: a.user_id == ^user.id and a.unit_id == ^unit.id)
+    |> Repo.delete_all()
   end
 
   def get_active_meeting(%Unit{} = unit) do
