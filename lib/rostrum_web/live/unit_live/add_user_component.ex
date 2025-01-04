@@ -61,6 +61,7 @@ defmodule RostrumWeb.UnitLive.AddUserComponent do
 
   @impl true
   def handle_event("validate", %{"email" => params}, socket) do
+    unit = socket.assigns.unit |> Rostrum.Repo.preload([:users])
     import Ecto.Changeset
     types = %{email: :string}
     changeset =
@@ -69,6 +70,13 @@ defmodule RostrumWeb.UnitLive.AddUserComponent do
       |> validate_required([:email])
       |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "must have the @ sign and no spaces")
       |> validate_length(:email, max: 160)
+      |> validate_change(:email, fn :email, email ->
+        if Enum.any?(unit.users, fn %{email: e} -> e == email end) do
+          [email: {"email is already associated with this unit", additional: "info"}]
+        else
+          []
+        end
+      end)
     {:noreply, assign(socket, form: to_form(changeset, action: :validate, as: "email"))}
   end
 

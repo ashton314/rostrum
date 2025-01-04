@@ -30,7 +30,7 @@
     <.button
       class="text-red-800 bg-red-50 hover:bg-red-100 border-red-700 border-2"
       phx-click={JS.push("boot_user", value: %{user: user.id}) |> hide("##{id}")}
-      data-confirm="Really remove user from unit?">
+      data-confirm="Really remove user from unit? If you are removing yourself you will loose access to this unit completely.">
       Remove from unit
     </.button>
   </:action>
