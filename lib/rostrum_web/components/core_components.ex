@@ -611,6 +611,7 @@ defmodule RostrumWeb.CoreComponents do
       "closing-prayer" => "Benediction",
       "sacrament" => "Administration of the Sacrament",
       "baby-blessing" => "Baby blessing",
+      "testimonies" => "Testimonies from the Congregation",
       "announcements" => "Announcements",
       "ward-business" => "Ward Business",
       "stake-business" => "Stake Business",
@@ -659,7 +660,7 @@ defmodule RostrumWeb.CoreComponents do
         {@event["Performer"]}
       <% end %>
 
-      <%= if @event["type"] in ["sacrament", "baby-blessing", "announcements", "ward-business", "stake-business", "ward-stake-business"] do %>
+      <%= if @event["type"] in ["sacrament", "baby-blessing", "announcements", "testimonies", "ward-business", "stake-business", "ward-stake-business"] do %>
         <h4>{@name}</h4>
       <% end %>
 

@@ -42,6 +42,7 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
             Prayer: [{"Invocation", "opening-prayer"}, {"Benediction", "closing-prayer"}],
             Ordinance: [{"Sacrament", "sacrament"}, {"Baby blessing", "baby-blessing"}],
             Other: [
+              {"Testimonies from the Congregation", "testimonies"},
               {"Announcements", "announcements"},
               {"Ward Business", "ward-business"},
               {"Stake Business", "stake-business"},

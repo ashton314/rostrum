@@ -27,6 +27,7 @@ defmodule Rostrum.Meetings.Event do
      "sacrament",
      "baby-blessing",
      "announcements",
+     "testimonies",
      "ward-business",
      "stake-business",
      "ward-stake-business",
