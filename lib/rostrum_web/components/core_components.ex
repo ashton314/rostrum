@@ -272,6 +272,7 @@ defmodule RostrumWeb.CoreComponents do
   attr :name, :any
   attr :label, :string, default: nil
   attr :value, :any
+  attr :help, :string, default: ""
 
   attr :type, :string,
     default: "text",
@@ -323,6 +324,7 @@ defmodule RostrumWeb.CoreComponents do
         />
         {@label}
       </label>
+      <div class="text-sm text-zinc-500">{@help}</div>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
@@ -342,6 +344,7 @@ defmodule RostrumWeb.CoreComponents do
         <option :if={@prompt} value="">{@prompt}</option>
         {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
+      <div class="text-sm text-zinc-500">{@help}</div>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
@@ -361,6 +364,7 @@ defmodule RostrumWeb.CoreComponents do
         ]}
         {@rest}
       >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
+      <div class="text-sm text-zinc-500">{@help}</div>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
@@ -383,6 +387,7 @@ defmodule RostrumWeb.CoreComponents do
         ]}
         {@rest}
       />
+      <div class="text-sm text-zinc-500">{@help}</div>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """

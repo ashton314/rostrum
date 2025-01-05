@@ -1,3 +1,5 @@
+<.back navigate={~p"/calendar_events"}>Back to calendar_events</.back>
+
 <.header>
   Calendar event {@calendar_event.id}
   <:subtitle>This is a calendar_event record from your database.</:subtitle>
@@ -16,8 +18,6 @@
   <:item title="Description">{@calendar_event.description}</:item>
 </.list>
 
-<.back navigate={~p"/calendar_events"}>Back to calendar_events</.back>
-
 <.modal :if={@live_action == :edit} id="calendar_event-modal" show on_cancel={JS.patch(~p"/calendar_events/#{@calendar_event}")}>
   <.live_component
     module={RostrumWeb.CalendarEventLive.FormComponent}
@@ -25,6 +25,7 @@
     title={@page_title}
     action={@live_action}
     calendar_event={@calendar_event}
+    current_unit={@current_unit}
     patch={~p"/calendar_events/#{@calendar_event}"}
   />
 </.modal>

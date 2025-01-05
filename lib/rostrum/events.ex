@@ -7,6 +7,7 @@ defmodule Rostrum.Events do
   alias Rostrum.Repo
 
   alias Rostrum.Events.CalendarEvent
+  alias Rostrum.Accounts.Unit
 
   @doc """
   Returns the list of calendar_events.
@@ -17,8 +18,17 @@ defmodule Rostrum.Events do
       [%CalendarEvent{}, ...]
 
   """
-  def list_calendar_events do
-    Repo.all(CalendarEvent)
+  def list_calendar_events(%Unit{} = unit) do
+    (from c in CalendarEvent,
+          where: c.unit_id == ^unit.id)
+    |> Repo.all()
+  end
+
+  def get_active_calendar_events(%Unit{} = unit) do
+    today = Timex.today("America/Denver")
+    (from a in CalendarEvent,
+         where: a.unit_id == ^unit.id and a.start_display <= ^today and (a.event_date >= ^today))
+    |> Repo.all()
   end
 
   @doc """
@@ -35,7 +45,11 @@ defmodule Rostrum.Events do
       ** (Ecto.NoResultsError)
 
   """
-  def get_calendar_event!(id), do: Repo.get!(CalendarEvent, id)
+  def get_calendar_event!(id, %Unit{} = unit) do
+    (from a in CalendarEvent,
+          where: a.unit_id == ^unit.id and a.id == ^id)
+    |> Repo.one!()
+  end
 
   @doc """
   Creates a calendar_event.

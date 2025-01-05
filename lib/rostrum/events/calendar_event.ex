@@ -16,7 +16,7 @@ defmodule Rostrum.Events.CalendarEvent do
   @doc false
   def changeset(calendar_event, attrs) do
     calendar_event
-    |> cast(attrs, [:start_display, :event_date, :time_description, :title, :description])
-    |> validate_required([:start_display, :event_date, :time_description, :title, :description])
+    |> cast(attrs, [:start_display, :event_date, :time_description, :title, :description, :unit_id])
+    |> validate_required([:start_display, :title, :description, :unit_id])
   end
 end

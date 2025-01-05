@@ -9,7 +9,7 @@ defmodule RostrumWeb.CalendarEventLive.FormComponent do
     <div>
       <.header>
         {@title}
-        <:subtitle>Use this form to manage calendar_event records in your database.</:subtitle>
+        <:subtitle>Use this form to manage calendar events.</:subtitle>
       </.header>
 
       <.simple_form
@@ -19,11 +19,46 @@ defmodule RostrumWeb.CalendarEventLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:start_display]} type="date" label="Start display" />
-        <.input field={@form[:event_date]} type="datetime-local" label="Event date" />
-        <.input field={@form[:time_description]} type="text" label="Time description" />
         <.input field={@form[:title]} type="text" label="Title" />
-        <.input field={@form[:description]} type="text" label="Description" />
+        <.input field={@form[:start_display]} type="date" label="Start display" />
+        <.input
+          field={@form[:event_date]}
+          type="datetime-local"
+          help="Use this for specific non-repeating events, e.g. a game night."
+          label="Event date"
+        />
+        <.input
+          field={@form[:time_description]}
+          type="text"
+          help="Use this to describe repeating events."
+          label="Time description"
+        />
+        <.input field={@form[:description]} type="textarea" label="Description" />
+
+        <.info>
+          You can use
+          <.link
+            class="underline text-sky-800"
+            href="https://daringfireball.net/projects/markdown/basics"
+          >
+            Markdown↗
+          </.link>
+          to format text and add links to the description of
+          announcements. The short of it: use one star for
+          *<em>italics</em>*, two stars for **<strong>bold</strong>**, and format links [like this](https://example.com).
+        </.info>
+
+        <.label>Preview</.label>
+        <div class="calendar-event program-event">
+          <div class="event-metadata">
+            <span class="event-title">{@form[:title].value}</span>
+            <span class="event-datetime">{@td_desc}</span>
+          </div>
+          <div class="event-description">
+            {raw(@preview)}
+          </div>
+        </div>
+
         <:actions>
           <.button phx-disable-with="Saving...">Save Calendar event</.button>
         </:actions>
@@ -34,9 +69,31 @@ defmodule RostrumWeb.CalendarEventLive.FormComponent do
 
   @impl true
   def update(%{calendar_event: calendar_event} = assigns, socket) do
+    preview =
+      case Earmark.as_html(calendar_event.description || "") do
+        {:ok, html_doc, _} ->
+          html_doc
+
+        {:error, html_doc, error_messages} ->
+          dbg(error_messages)
+          html_doc
+      end
+
+    desc = calendar_event.time_description
+    dt = calendar_event.event_date |> dbg()
+
+    td_desc =
+      if is_binary(desc) && desc != "" do
+        desc
+      else
+        if dt, do: Timex.format!(dt, "%A, %B %d, %Y at %I:%i %P", :strftime), else: ""
+      end
+
     {:ok,
      socket
      |> assign(assigns)
+     |> assign(:preview, preview)
+     |> assign(:td_desc, td_desc)
      |> assign_new(:form, fn ->
        to_form(Events.change_calendar_event(calendar_event))
      end)}
@@ -45,7 +102,34 @@ defmodule RostrumWeb.CalendarEventLive.FormComponent do
   @impl true
   def handle_event("validate", %{"calendar_event" => calendar_event_params}, socket) do
     changeset = Events.change_calendar_event(socket.assigns.calendar_event, calendar_event_params)
-    {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
+
+    preview =
+      case Earmark.as_html(calendar_event_params["description"]) do
+        {:ok, html_doc, _} ->
+          html_doc
+
+        {:error, html_doc, error_messages} ->
+          dbg(error_messages)
+          html_doc
+      end
+
+    desc = calendar_event_params["time_description"]
+    dt = calendar_event_params["event_date"]
+
+    td_desc =
+      if is_binary(desc) && desc != "" do
+        desc
+      else
+        if dt && dt != "",
+          do: Timex.format!(Timex.parse!(dt, "%FT%H:%M", :strftime), "%A, %B %d, %Y", :strftime),
+          else: ""
+      end
+
+    {:noreply,
+     socket
+     |> assign(:preview, preview)
+     |> assign(:td_desc, td_desc)
+     |> assign(form: to_form(changeset, action: :validate))}
   end
 
   def handle_event("save", %{"calendar_event" => calendar_event_params}, socket) do
@@ -53,6 +137,9 @@ defmodule RostrumWeb.CalendarEventLive.FormComponent do
   end
 
   defp save_calendar_event(socket, :edit, calendar_event_params) do
+    unit = socket.assigns.current_unit
+    calendar_event_params = Map.put(calendar_event_params, "unit_id", unit.id)
+
     case Events.update_calendar_event(socket.assigns.calendar_event, calendar_event_params) do
       {:ok, calendar_event} ->
         notify_parent({:saved, calendar_event})
@@ -68,6 +155,9 @@ defmodule RostrumWeb.CalendarEventLive.FormComponent do
   end
 
   defp save_calendar_event(socket, :new, calendar_event_params) do
+    unit = socket.assigns.current_unit
+    calendar_event_params = Map.put(calendar_event_params, "unit_id", unit.id)
+
     case Events.create_calendar_event(calendar_event_params) do
       {:ok, calendar_event} ->
         notify_parent({:saved, calendar_event})

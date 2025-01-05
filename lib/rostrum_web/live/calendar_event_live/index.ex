@@ -6,7 +6,7 @@ defmodule RostrumWeb.CalendarEventLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :calendar_events, Events.list_calendar_events())}
+    {:ok, stream(socket, :calendar_events, Events.list_calendar_events(socket.assigns.current_unit))}
   end
 
   @impl true
@@ -17,13 +17,13 @@ defmodule RostrumWeb.CalendarEventLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Calendar event")
-    |> assign(:calendar_event, Events.get_calendar_event!(id))
+    |> assign(:calendar_event, Events.get_calendar_event!(id, socket.assigns.current_unit))
   end
 
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:page_title, "New Calendar event")
-    |> assign(:calendar_event, %CalendarEvent{})
+    |> assign(:calendar_event, %CalendarEvent{start_display: Timex.today("America/Denver")})
   end
 
   defp apply_action(socket, :index, _params) do
@@ -39,7 +39,7 @@ defmodule RostrumWeb.CalendarEventLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    calendar_event = Events.get_calendar_event!(id)
+    calendar_event = Events.get_calendar_event!(id, socket.assigns.current_unit)
     {:ok, _} = Events.delete_calendar_event(calendar_event)
 
     {:noreply, stream_delete(socket, :calendar_events, calendar_event)}

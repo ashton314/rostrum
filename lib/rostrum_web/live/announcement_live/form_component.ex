@@ -9,7 +9,7 @@ defmodule RostrumWeb.AnnouncementLive.FormComponent do
     <div>
       <.header>
         {@title}
-        <:subtitle>Use this form to manage announcement records in your database.</:subtitle>
+        <:subtitle>Use this form to manage announcements.</:subtitle>
       </.header>
 
       <.simple_form
@@ -19,8 +19,8 @@ defmodule RostrumWeb.AnnouncementLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:start_display]} type="date" label="Start display" />
-        <.input field={@form[:end_display]} type="date" label="End display" />
+        <.input field={@form[:start_display]} type="date" help="The announcement won't display until this day." label="Start display" />
+        <.input field={@form[:end_display]} type="date" help="This event will be archived automatically after this day." label="End display" />
         <.input field={@form[:title]} type="text" label="Title" />
         <.input field={@form[:description]} type="textarea" label="Description" />
 

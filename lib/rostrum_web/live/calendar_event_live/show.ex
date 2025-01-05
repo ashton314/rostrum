@@ -13,7 +13,7 @@ defmodule RostrumWeb.CalendarEventLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:calendar_event, Events.get_calendar_event!(id))}
+     |> assign(:calendar_event, Events.get_calendar_event!(id, socket.assigns.current_unit))}
   end
 
   defp page_title(:show), do: "Show Calendar event"
