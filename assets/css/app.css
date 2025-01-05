@@ -3,3 +3,54 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+
+.program-event h5 {
+    text-transform: lowercase;
+    font-variant-caps: small-caps;
+}
+
+.hymn-number {
+    margin-right: 1rem;
+}
+
+.hymn-name {
+    font-style: italic;
+}
+
+.hymn-links {
+    display: block;
+    font-size: 0.8rem;
+    margin-top: -0.2rem;
+}
+.hymn-links a {
+    color: var(--subtle-link-color);
+    text-decoration-style: dotted;
+}
+.hymn-links a:hover {
+    text-decoration-style: solid;
+}
+.hymn-link-sep {
+    margin: 0 0.5rem;
+    color: var(--body-accent-font-color);
+    font-size: 0.6rem;
+}
+.hymn-links a::after {
+    content: "↗";
+    vertical-align: super;
+    font-size: 0.6rem;
+    text-decoration: none;
+}
+
+.hymn-pdf-link {
+}
+
+.hymn-verses {
+    display: block;
+    font-size: 0.8rem;
+    margin-top: -0.2rem;
+    color: var(--body-accent-font-color);
+}
+
+.musical-number-name {
+    font-style: italic;
+}
