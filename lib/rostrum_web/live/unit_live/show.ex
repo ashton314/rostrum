@@ -36,6 +36,10 @@ defmodule RostrumWeb.UnitLive.Show do
     {:noreply, stream_insert(socket, :users, user)}
   end
 
+  def handle_info({RostrumWeb.UnitLive.FormComponent, {:saved, fresh_unit}}, socket) do
+    {:noreply, assign(socket, :unit, fresh_unit)}
+  end
+
   defp page_title(:show), do: "Show Unit"
   defp page_title(:edit), do: "Edit Unit"
   defp page_title(:add_user), do: "Add User to Unit"

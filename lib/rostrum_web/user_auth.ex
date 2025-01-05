@@ -95,9 +95,10 @@ defmodule RostrumWeb.UserAuth do
     {user_token, conn} = ensure_user_token(conn)
     user = user_token && Accounts.get_user_by_session_token(user_token)
     user = user && Accounts.load_units(user)
+    current_unit = user && Accounts.get_active_unit!(user)
     conn
     |> assign(:current_user, user)
-    |> assign(:current_unit, user && user.units && length(user.units) > 0 && List.first(user.units))
+    |> assign(:current_unit, current_unit)
   end
 
   defp ensure_user_token(conn) do
@@ -185,10 +186,7 @@ defmodule RostrumWeb.UserAuth do
         Accounts.get_user_by_session_token(user_token)
       end)
       |> assign_new(:current_unit, fn %{current_user: u} ->
-        u
-        |> Accounts.load_units()
-        |> then(fn %{units: []} -> nil
-                   %{units: [h | _]} -> h end)
+        Accounts.get_active_unit!(u)
       end)
 
     if socket.assigns.current_user do

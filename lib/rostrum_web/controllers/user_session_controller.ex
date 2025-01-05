@@ -39,4 +39,18 @@ defmodule RostrumWeb.UserSessionController do
     |> put_flash(:info, "Logged out successfully.")
     |> UserAuth.log_out_user()
   end
+
+  def update_active_unit(conn, %{"unit_id" => unit_id}) do
+    case Accounts.set_active_unit(conn.assigns.current_user, unit_id) do
+      {:ok, new_user} ->
+        conn
+        |> assign(:current_user, new_user)
+        |> assign(:current_unit, Accounts.get_unit!(unit_id, new_user))
+        |> redirect(to: ~p"/units")
+
+      {:error, msg} ->
+        conn
+        |> put_flash(:error, msg)
+    end
+  end
 end

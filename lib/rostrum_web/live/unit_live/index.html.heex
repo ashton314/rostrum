@@ -13,6 +13,20 @@
   row_click={fn {_id, unit} -> JS.navigate(~p"/units/#{unit}") end}
 >
   <:col :let={{_id, unit}} label="Name">{unit.name}</:col>
+  <:col :let={{_id, unit}} label="URL slug">{unit.slug}</:col>
+  <:action :let={{_id, unit}}>
+    <.link
+      class="border-2 rounded border-green-800 bg-green-800 text-white p-2"
+      :if={unit.id == @current_user.active_unit_id}>
+      Active Unit
+    </.link>
+    <.link
+      :if={unit.id != @current_user.active_unit_id}
+      class="border-2 rounded border-green-800 bg-white hover:bg-green-100 text-green-800 p-2"
+      phx-click={JS.push("make_active", value: %{id: unit.id})}>
+      Make active unit
+    </.link>
+  </:action>
   <:action :let={{_id, unit}}>
     <div class="sr-only">
       <.link navigate={~p"/units/#{unit}"}>Show</.link>

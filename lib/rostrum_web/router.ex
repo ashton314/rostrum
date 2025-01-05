@@ -118,5 +118,7 @@ defmodule RostrumWeb.Router do
     live "/announcements/:id/edit", AnnouncementLive.Index, :edit
     live "/announcements/:id", AnnouncementLive.Show, :show
     live "/announcements/:id/show/edit", AnnouncementLive.Show, :edit
+
+    post "/users/set_active_unit/:unit_id", UserSessionController, :update_active_unit
   end
 end

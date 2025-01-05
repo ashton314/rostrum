@@ -369,6 +369,30 @@ defmodule Rostrum.Accounts do
     |> Map.get(:units)
   end
 
+  def set_active_unit(%User{} = user, unit_id) do
+    if can_see_unit?(user, unit_id) do
+      user
+      |> User.active_unit_changeset(%{"active_unit_id" => unit_id})
+      |> Repo.update()
+    else
+      {:error, "No unit with that ID found"}
+    end
+  end
+
+  def get_active_unit!(%User{} = user) do
+    if user.active_unit_id do
+      get_unit!(user.active_unit_id, user)
+    else
+      user
+      |> Repo.preload([:units])
+      |> Map.get(:units)
+      |> case do
+        [] -> nil
+        [hd | _] -> hd
+      end
+    end
+  end
+
   @doc """
   Gets a single unit.
 

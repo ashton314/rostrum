@@ -11,6 +11,8 @@ defmodule Rostrum.Accounts.User do
 
     many_to_many :units, Rostrum.Accounts.Unit, join_through: "users_units"
 
+    field :active_unit_id, :integer
+
     timestamps(type: :utc_datetime)
   end
 
@@ -159,5 +161,10 @@ defmodule Rostrum.Accounts.User do
     else
       add_error(changeset, :current_password, "is not valid")
     end
+  end
+
+  def active_unit_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:active_unit_id])
   end
 end

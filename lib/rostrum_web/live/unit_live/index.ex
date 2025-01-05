@@ -49,4 +49,16 @@ defmodule RostrumWeb.UnitLive.Index do
 
     {:noreply, stream_delete(socket, :units, unit)}
   end
+
+  def handle_event("make_active", %{"id" => id}, socket) do
+    {:ok, updated_user} = Accounts.set_active_unit(socket.assigns.current_user, id)
+    updated_unit = Accounts.get_active_unit!(updated_user)
+    {:noreply,
+     socket
+     |> assign(:current_user, updated_user)
+     |> assign(:current_unit, updated_unit)
+     |> stream(:units, Accounts.list_units(updated_user))
+     |> put_flash(:info, "Active unit changed to #{updated_unit.name}")
+    }
+  end
 end
