@@ -698,7 +698,7 @@ defmodule RostrumWeb.CoreComponents do
 
   def back(assigns) do
     ~H"""
-    <div>
+    <div class="mb-2">
       <.link
         navigate={@navigate}
         class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"

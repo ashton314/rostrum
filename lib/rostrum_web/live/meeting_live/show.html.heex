@@ -1,17 +1,23 @@
 <.back navigate={~p"/meetings"}>Back to meetings</.back>
 
 <.header>
-  Meeting <.format_date date={@meeting.date} />
+  {@meeting.title}
+  <:subtitle>
+    <.format_date date={@meeting.date} />
+  </:subtitle>
   <:actions>
     <.link patch={~p"/meetings/#{@meeting}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit meeting</.button>
+      <.button>Edit meeting organization</.button>
     </.link>
   </:actions>
 </.header>
 
 <.list>
-  <:item title="Title">{@meeting.title}</:item>
-  <:item title="Date">{@meeting.date}</:item>
+  <:item title="Presiding">{@meeting.presiding}</:item>
+  <:item title="Conducting">{@meeting.conducting}</:item>
+  <:item title="Chorister">{@meeting.chorister}</:item>
+  <:item title={@meeting.accompanist_term}>{@meeting.accompanist}</:item>
+  <:item title="Welcome blurb">{@meeting.welcome_blurb}</:item>
 </.list>
 
 <.events_editor meeting={@meeting} />
