@@ -44,4 +44,12 @@ defmodule RostrumWeb.MeetingLive.Index do
 
     {:noreply, stream_delete(socket, :meetings, meeting)}
   end
+
+  def list_hymns(%Meeting{} = meeting) do
+    for event <- meeting.events["events"],
+        event["type"] in ["opening-hymn", "closing-hymn", "sacrament-hymn", "rest-hymn", "hymn"] do
+      event["number"]
+    end
+    |> Enum.join(", ")
+  end
 end

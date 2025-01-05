@@ -241,7 +241,6 @@ defmodule RostrumWeb.UserAuth do
   Requires that a user have an associated %Unit{}.
   """
   def require_unit_user(conn, _opts) do
-    dbg(conn.assigns)
     if conn.assigns[:current_user] do
       user = conn.assigns[:current_user] |> Accounts.load_units()
       if is_list(user.units) && length(user.units) > 0 do

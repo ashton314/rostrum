@@ -2,6 +2,7 @@ defmodule RostrumWeb.PageController do
   use RostrumWeb, :controller
 
   alias Rostrum.Accounts
+  alias Rostrum.Announcements
 
   def home(conn, _params) do
     # The home page is often custom made,
@@ -20,6 +21,7 @@ defmodule RostrumWeb.PageController do
         m = m |> Rostrum.Repo.preload([:unit])
         conn
         |> assign(:meeting, m)
+        |> assign(:announcements, Announcements.get_active_annoucements(m.unit))
         |> put_root_layout(html: :meeting_root)
         |> put_layout(html: :meeting)
         |> render(:meeting)

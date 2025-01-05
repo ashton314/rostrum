@@ -6,7 +6,7 @@ defmodule RostrumWeb.AnnouncementLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :announcements, Announcements.list_announcements())}
+    {:ok, stream(socket, :announcements, Announcements.list_announcements(socket.assigns.current_unit))}
   end
 
   @impl true
@@ -17,13 +17,13 @@ defmodule RostrumWeb.AnnouncementLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Announcement")
-    |> assign(:announcement, Announcements.get_announcement!(id))
+    |> assign(:announcement, Announcements.get_announcement!(id, socket.assigns.current_unit))
   end
 
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:page_title, "New Announcement")
-    |> assign(:announcement, %Announcement{})
+    |> assign(:announcement, %Announcement{start_display: Timex.today()})
   end
 
   defp apply_action(socket, :index, _params) do
@@ -39,9 +39,13 @@ defmodule RostrumWeb.AnnouncementLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    announcement = Announcements.get_announcement!(id)
+    announcement = Announcements.get_announcement!(id, socket.assigns.current_unit)
     {:ok, _} = Announcements.delete_announcement(announcement)
 
     {:noreply, stream_delete(socket, :announcements, announcement)}
+  end
+
+  def preview(announcement) do
+    Earmark.as_html!(announcement.description || "")
   end
 end

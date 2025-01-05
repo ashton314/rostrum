@@ -670,6 +670,29 @@ defmodule RostrumWeb.CoreComponents do
     """
   end
 
+  attr :announcement, :any, required: true
+  def render_announcement(assigns) do
+    import Phoenix.HTML
+    rendered = case Earmark.as_html(assigns.announcement.description) do
+      {:ok, html, _} -> html
+      {:error, html, _e} ->
+        html
+    end
+
+    assigns =
+      assigns
+      |> assign(:rendered, rendered)
+
+    ~H"""
+    <div class="announcement">
+      <div class="announcement-header">{@announcement.title}</div>
+      <div class="announcement-description">
+        {raw(@rendered)}
+      </div>
+    </div>
+    """
+  end
+
   defp format_verses(""), do: nil
   defp format_verses(nil), do: nil
   defp format_verses(verse_string) do
@@ -711,11 +734,17 @@ defmodule RostrumWeb.CoreComponents do
   end
 
   attr :date, :any, required: true
+  attr :format, :any, default: ""
   def format_date(assigns) do
-    with {:ok, fmtd} <- Timex.format(assigns.date, "%A, %B %d, %Y", :strftime) do
+    import Phoenix.HTML
+    fmt = case assigns.format do
+      "short" -> "%d&nbsp;%b&nbsp;%Y"
+      _ -> "%A, %B %d, %Y"
+    end
+    with {:ok, fmtd} <- Timex.format(assigns.date, fmt, :strftime) do
       assigns = assign(assigns, :fmtd, fmtd)
       ~H"""
-      {@fmtd}
+      {raw(@fmtd)}
       """
     else
       _ ->

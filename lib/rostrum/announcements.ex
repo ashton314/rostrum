@@ -7,6 +7,7 @@ defmodule Rostrum.Announcements do
   alias Rostrum.Repo
 
   alias Rostrum.Announcements.Announcement
+  alias Rostrum.Accounts.Unit
 
   @doc """
   Returns the list of announcements.
@@ -17,8 +18,17 @@ defmodule Rostrum.Announcements do
       [%Announcement{}, ...]
 
   """
-  def list_announcements do
-    Repo.all(Announcement)
+  def list_announcements(%Unit{} = unit) do
+    (from a in Announcement,
+          where: a.unit_id == ^unit.id)
+    |> Repo.all()
+  end
+
+  def get_active_annoucements(%Unit{} = unit) do
+    today = Timex.today()
+    (from a in Announcement,
+         where: a.unit_id == ^unit.id and a.start_display <= ^today)
+    |> Repo.all()
   end
 
   @doc """
@@ -35,7 +45,11 @@ defmodule Rostrum.Announcements do
       ** (Ecto.NoResultsError)
 
   """
-  def get_announcement!(id), do: Repo.get!(Announcement, id)
+  def get_announcement!(id, %Unit{} = unit) do
+    (from a in Announcement,
+          where: a.unit_id == ^unit.id and a.id == ^id)
+    |> Repo.one!()
+  end
 
   @doc """
   Creates a announcement.

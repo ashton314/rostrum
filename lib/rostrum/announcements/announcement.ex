@@ -7,7 +7,7 @@ defmodule Rostrum.Announcements.Announcement do
     field :title, :string
     field :start_display, :date
     field :end_display, :date
-    field :unit_id, :id
+    belongs_to :unit, Rostrum.Accounts.Unit
 
     timestamps(type: :utc_datetime)
   end
@@ -15,7 +15,7 @@ defmodule Rostrum.Announcements.Announcement do
   @doc false
   def changeset(announcement, attrs) do
     announcement
-    |> cast(attrs, [:start_display, :end_display, :title, :description])
-    |> validate_required([:start_display, :end_display, :title, :description])
+    |> cast(attrs, [:start_display, :end_display, :title, :description, :unit_id])
+    |> validate_required([:start_display, :title, :description, :unit_id])
   end
 end

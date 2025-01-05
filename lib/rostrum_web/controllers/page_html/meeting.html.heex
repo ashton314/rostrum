@@ -35,4 +35,8 @@
 
 <h3>Announcements</h3>
 
+<div :for={a <- @announcements}>
+  <.render_announcement announcement={a} />
+</div>
+
 <h3>Upcoming Events</h3>

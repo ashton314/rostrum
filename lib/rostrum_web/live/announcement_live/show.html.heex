@@ -1,3 +1,5 @@
+<.back navigate={~p"/announcements"}>Back to announcements</.back>
+
 <.header>
   Announcement {@announcement.id}
   <:subtitle>This is a announcement record from your database.</:subtitle>
@@ -12,10 +14,8 @@
   <:item title="Start display">{@announcement.start_display}</:item>
   <:item title="End display">{@announcement.end_display}</:item>
   <:item title="Title">{@announcement.title}</:item>
-  <:item title="Description">{@announcement.description}</:item>
+  <:item title="Description"><div class="announcement-description program-event">{raw(@preview)}</div></:item>
 </.list>
-
-<.back navigate={~p"/announcements"}>Back to announcements</.back>
 
 <.modal :if={@live_action == :edit} id="announcement-modal" show on_cancel={JS.patch(~p"/announcements/#{@announcement}")}>
   <.live_component
@@ -24,6 +24,7 @@
     title={@page_title}
     action={@live_action}
     announcement={@announcement}
+    current_unit={@current_unit}
     patch={~p"/announcements/#{@announcement}"}
   />
 </.modal>

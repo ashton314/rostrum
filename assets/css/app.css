@@ -9,6 +9,16 @@
     font-variant-caps: small-caps;
 }
 
+.program-event a {
+    color: #06d;
+    text-decoration-style: dotted;
+}
+
+.program-event a:hover {
+    text-decoration-style: solid;
+}
+
+
 .hymn-number {
     margin-right: 1rem;
 }
@@ -53,4 +63,49 @@
 
 .musical-number-name {
     font-style: italic;
+}
+
+.announcement {
+    margin-bottom: 2rem;
+}
+
+.announcement .announcement-header {
+    font-weight: 600;
+    display: block;
+    clear: both;
+}
+
+.calendar-event {
+    margin-bottom: 2rem;
+}
+
+.calendar-event .event-metadata {
+    margin-bottom: 0.2rem;
+}
+
+.event-datetime {
+    font-size: 0.8rem;
+}
+
+.event-ical-link {
+    display: block;
+    font-size: 0.8rem;
+    margin-top: -0.2rem;
+    color: var(--subtle-link-color);
+    text-decoration-style: dotted;
+}
+
+.event-ical-link::after {
+    content: "↘";
+    font-size: 0.6rem;
+    text-decoration: none;
+}
+
+.event-ical-link:hover {
+    text-decoration-style: solid;
+}
+
+.calendar-event .event-title {
+    font-weight: 600;
+    display: block;
 }
