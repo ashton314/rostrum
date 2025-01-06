@@ -46,7 +46,7 @@ defmodule RostrumWeb.UserSessionController do
         conn
         |> assign(:current_user, new_user)
         |> assign(:current_unit, Accounts.get_unit!(unit_id, new_user))
-        |> redirect(to: ~p"/units")
+        |> redirect(to: ~p"/dash")
 
       {:error, msg} ->
         conn

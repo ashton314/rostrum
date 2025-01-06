@@ -1,7 +1,6 @@
 defmodule RostrumWeb.PageController do
   use RostrumWeb, :controller
 
-  alias Rostrum.Events.CalendarEvent
   alias Rostrum.Accounts
   alias Rostrum.Announcements
   alias Rostrum.Events

@@ -87,6 +87,8 @@ defmodule RostrumWeb.Router do
   scope "/", RostrumWeb do
     pipe_through [:browser, :require_authenticated_user]
 
+    live "/dash", DashboardLive.Dashboard, :dashboard
+
     live "/units", UnitLive.Index, :index
     live "/units/new", UnitLive.Index, :new
     live "/units/:id/edit", UnitLive.Index, :edit
