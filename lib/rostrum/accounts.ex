@@ -544,7 +544,7 @@ defmodule Rostrum.Accounts do
   def get_active_meeting(%Unit{} = unit) do
     (from m in Meeting,
          where: m.unit_id == ^unit.id,
-         order_by: m.date,
+         order_by: [desc: m.date],
          limit: 1)
     |> Repo.one()
   end
