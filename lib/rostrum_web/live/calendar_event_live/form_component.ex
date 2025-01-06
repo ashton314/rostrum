@@ -86,7 +86,9 @@ defmodule RostrumWeb.CalendarEventLive.FormComponent do
       if is_binary(desc) && desc != "" do
         desc
       else
-        if dt, do: Timex.format!(dt, "%A, %B %d, %Y at %I:%i %P", :strftime), else: ""
+        if dt,
+           do: Timex.format!(dt, "%A, %B %d, %Y at %l:%M %p", :strftime),
+           else: ""
       end
 
     {:ok,
@@ -114,7 +116,7 @@ defmodule RostrumWeb.CalendarEventLive.FormComponent do
       end
 
     desc = calendar_event_params["time_description"]
-    dt = calendar_event_params["event_date"]
+    dt = calendar_event_params["event_date"] |> dbg()
 
     td_desc =
       if is_binary(desc) && desc != "" do

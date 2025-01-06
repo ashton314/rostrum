@@ -699,6 +699,45 @@ defmodule RostrumWeb.CoreComponents do
     """
   end
 
+  attr :event, :any, required: true
+  def render_calendar_event(assigns) do
+    import Phoenix.HTML
+    rendered = case Earmark.as_html(assigns.event.description) do
+      {:ok, html, _} -> html
+      {:error, html, _e} ->
+        html
+    end
+
+    desc = assigns.event.time_description
+    dt = assigns.event.event_date
+
+    td_desc =
+      if is_binary(desc) && desc != "" do
+        desc
+      else
+        if dt,
+           do: Timex.format!(dt, "%A, %B %d, %Y at %l:%M %p", :strftime),
+           else: ""
+      end
+
+    assigns =
+      assigns
+      |> assign(:td_desc, td_desc)
+      |> assign(:rendered, rendered)
+
+    ~H"""
+    <div class="calendar-event">
+      <div class="event-metadata">
+        <span class="event-title">{@event.title}</span>
+        <span class="event-datetime">{@td_desc}</span>
+      </div>
+      <div class="event-description">
+        {raw(@rendered)}
+      </div>
+    </div>
+    """
+  end
+
   defp format_verses(""), do: nil
   defp format_verses(nil), do: nil
   defp format_verses(verse_string) do

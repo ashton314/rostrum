@@ -40,3 +40,7 @@
 </div>
 
 <h3>Upcoming Events</h3>
+
+<div :for={e <- @calendar_events}>
+  <.render_calendar_event event={e} />
+</div>

@@ -25,7 +25,7 @@ defmodule Rostrum.Events do
   end
 
   def get_active_calendar_events(%Unit{} = unit) do
-    today = Timex.today("America/Denver")
+    today = Timex.now("America/Denver")
     (from a in CalendarEvent,
          where: a.unit_id == ^unit.id and a.start_display <= ^today and (a.event_date >= ^today))
     |> Repo.all()
