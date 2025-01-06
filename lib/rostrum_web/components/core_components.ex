@@ -664,6 +664,7 @@ defmodule RostrumWeb.CoreComponents do
         <div class="hymn">
           <h5>{@event["term"] || @name}</h5>
           <span class="hymn-number">{@event["number"]}</span><span class="hymn-name">{@hymn_data.name}</span>
+          <span :if={@verses} class="hymn-verses">{@verses}</span>
           <span class="hymn-links">
             <span :if={@hymn_data.url != ""} class="hymn-link">
               <a href={@hymn_data.url}>open music</a>
@@ -674,9 +675,6 @@ defmodule RostrumWeb.CoreComponents do
             </span>
           </span>
         </div>
-        <%= if @verses do %>
-          <span class="hymn-verses">{@verses}</span>
-        <% end %>
       <% end %>
 
       <%= if @event["type"] in ["musical-number"] do %>
