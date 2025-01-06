@@ -646,7 +646,12 @@ defmodule RostrumWeb.CoreComponents do
            "sacrament-hymn",
            "hymn"
          ] do
-        assign(assigns, :hymn_data, Rostrum.Meetings.Event.hymn_name(assigns.event["number"]))
+        data = Rostrum.Meetings.Event.hymn_name(assigns.event["number"])
+        if is_map(data) do
+          assign(assigns, :hymn_data, data)
+        else
+          assign(assigns, :hymn_data, %{name: assigns.event["name"], url: "", pdf: ""})
+        end
       else
         assigns
       end

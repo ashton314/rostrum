@@ -1,6 +1,7 @@
 defmodule RostrumWeb.MeetingLive.Index do
   use RostrumWeb, :live_view
 
+  alias Rostrum.Accounts
   alias Rostrum.Meetings
   alias Rostrum.Meetings.Meeting
 
@@ -18,6 +19,13 @@ defmodule RostrumWeb.MeetingLive.Index do
     socket
     |> assign(:page_title, "Edit Meeting")
     |> assign(:meeting, Meetings.get_meeting!(id, socket.assigns.current_unit))
+  end
+
+  defp apply_action(socket, :new, %{"clone" => "1"}) do
+    last_meeting = Accounts.get_active_meeting(socket.assigns.current_unit)
+    socket
+    |> assign(:page_title, "New Meeting")
+    |> assign(:meeting, Meetings.clone_skeleton(last_meeting))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -46,9 +54,9 @@ defmodule RostrumWeb.MeetingLive.Index do
   end
 
   def list_hymns(%Meeting{} = meeting) do
-    for event <- meeting.events["events"],
+    for event <- meeting.events["events"] || [],
         event["type"] in ["opening-hymn", "closing-hymn", "sacrament-hymn", "rest-hymn", "hymn"] do
-      event["number"]
+      if event["number"], do: event["number"], else: "TBD"
     end
     |> Enum.join(", ")
   end

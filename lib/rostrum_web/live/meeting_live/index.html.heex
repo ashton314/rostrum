@@ -1,8 +1,11 @@
 <.header>
   Listing Meetings
   <:actions>
+    <.link patch={~p"/meetings/new?clone=1"}>
+      <.button>Clone Last Meeting</.button>
+    </.link>
     <.link patch={~p"/meetings/new"}>
-      <.button>New Meeting</.button>
+      <.button>New Blank Meeting</.button>
     </.link>
   </:actions>
 </.header>

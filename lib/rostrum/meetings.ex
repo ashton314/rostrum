@@ -20,7 +20,8 @@ defmodule Rostrum.Meetings do
   """
   def list_meetings(%Unit{} = unit) do
     (from m in Meeting,
-          where: m.unit_id == ^unit.id)
+          where: m.unit_id == ^unit.id,
+          order_by: [desc: :date])
     |> Repo.all()
   end
 
@@ -108,4 +109,20 @@ defmodule Rostrum.Meetings do
   def change_meeting(%Meeting{} = meeting, attrs \\ %{}) do
     Meeting.changeset(meeting, attrs)
   end
+
+  def clone_skeleton(%Meeting{} = meeting) do
+    %{meeting |
+      id: nil,
+      date: Date.add(meeting.date, 7),
+      events: scrub_events(meeting.events)}
+  end
+
+  defp scrub_events(%{"events" => es}), do: %{"events" => Enum.map(es, &scrub_event/1)}
+  defp scrub_event(%{"type" => t} = e)
+       when t in ["opening-hymn", "closing-hymn", "sacrament-hymn", "rest-hymn", "hymn"],
+       do: %{e | "number" => nil, "verses" => nil, "id" => UUID.uuid4()}
+  defp scrub_event(%{"type" => t} = e)
+       when t in ["speaker", "opening-prayer", "closing-prayer"],
+       do: %{e | "name" => nil, "id" => UUID.uuid4()}
+  defp scrub_event(e), do: %{e | "id" => UUID.uuid4()}
 end

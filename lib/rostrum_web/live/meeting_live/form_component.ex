@@ -20,6 +20,7 @@ defmodule RostrumWeb.MeetingLive.FormComponent do
         phx-submit="save"
       >
         <.input field={@form[:title]} type="text" label="Meeting Title" placeholder="e.g. Fast and Testimony Meeting"/>
+        <.input field={@form[:date]} type="date" label="Date" />
         <.input field={@form[:welcome_blurb]} type="text" label="Welcome blurb" placeholder="e.g. Welcome to the Church of Jesus Christ of Latter-day Saints"/>
         <.input field={@form[:presiding]} type="text" label="Presiding" />
         <.input field={@form[:conducting]} type="text" label="Conducting" />
@@ -31,10 +32,9 @@ defmodule RostrumWeb.MeetingLive.FormComponent do
           options={["Organist", "Pianist", "Accompanist"]}
         />
         <.input field={@form[:accompanist]} type="text" label={@form[:accompanist_term].value} />
-        <.input field={@form[:date]} type="date" label="Date" />
 
         <:actions>
-          <.button phx-disable-with="Saving...">Save Meeting</.button>
+          <.button phx-disable-with="Saving...">Save and edit events</.button>
         </:actions>
       </.simple_form>
     </div>
@@ -78,15 +78,18 @@ defmodule RostrumWeb.MeetingLive.FormComponent do
 
   defp save_meeting(socket, :new, meeting_params) do
     unit = socket.assigns.current_unit
-    meeting_params = Map.put(meeting_params, "unit_id", unit.id)
-    case dbg(Meetings.create_meeting(meeting_params)) do
+    meeting_params =
+      meeting_params
+      |> Map.put("unit_id", unit.id)
+      |> Map.put("events", socket.assigns.meeting.events)
+    case Meetings.create_meeting(meeting_params) do
       {:ok, meeting} ->
         notify_parent({:saved, meeting})
 
         {:noreply,
          socket
          |> put_flash(:info, "Meeting created successfully")
-         |> push_patch(to: socket.assigns.patch)}
+         |> push_navigate(to: ~p"/meetings/#{meeting}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
