@@ -475,9 +475,13 @@ defmodule RostrumWeb.CoreComponents do
   attr :class, :string, default: nil
 
   slot :inner_block, required: true
+
   def warning(assigns) do
     ~H"""
-    <div class={["text-sm pretty-text my-4 p-5 bg-red-100 border-l-4 border-red-600 rounded text-slate-600", @class]}>
+    <div class={[
+      "text-sm pretty-text my-4 p-5 bg-red-100 border-l-4 border-red-600 rounded text-slate-600",
+      @class
+    ]}>
       {render_slot(@inner_block)}
     </div>
     """
@@ -489,9 +493,13 @@ defmodule RostrumWeb.CoreComponents do
   attr :class, :string, default: nil
 
   slot :inner_block, required: true
+
   def info(assigns) do
     ~H"""
-    <div class={["text-sm pretty-text my-4 p-5 bg-cyan-100 border-l-4 border-cyan-600 rounded text-slate-600", @class]}>
+    <div class={[
+      "text-sm pretty-text my-4 p-5 bg-cyan-100 border-l-4 border-cyan-600 rounded text-slate-600",
+      @class
+    ]}>
       {render_slot(@inner_block)}
     </div>
     """
@@ -603,6 +611,7 @@ defmodule RostrumWeb.CoreComponents do
   end
 
   attr :event, :any, required: true
+
   def render_event(assigns) do
     type_to_name = %{
       "opening-hymn" => "Opening Hymn",
@@ -630,7 +639,13 @@ defmodule RostrumWeb.CoreComponents do
       |> assign(:verses, format_verses(assigns.event["verses"]))
 
     assigns =
-      if assigns.event["type"] in ["opening-hymn", "closing-hymn", "rest-hymn", "sacrament-hymn", "hymn"] do
+      if assigns.event["type"] in [
+           "opening-hymn",
+           "closing-hymn",
+           "rest-hymn",
+           "sacrament-hymn",
+           "hymn"
+         ] do
         assign(assigns, :hymn_data, Rostrum.Meetings.Event.hymn_name(assigns.event["number"]))
       else
         assigns
@@ -650,9 +665,13 @@ defmodule RostrumWeb.CoreComponents do
           <h5>{@event["term"] || @name}</h5>
           <span class="hymn-number">{@event["number"]}</span><span class="hymn-name">{@hymn_data.name}</span>
           <span class="hymn-links">
-            <span :if={@hymn_data.url != ""} class="hymn-link"><a href={@hymn_data.url}>open music</a></span>
+            <span :if={@hymn_data.url != ""} class="hymn-link">
+              <a href={@hymn_data.url}>open music</a>
+            </span>
             <span :if={@hymn_data.url != "" && @hymn_data.pdf != ""} class="hymn-link-sep">◊</span>
-            <span :if={@hymn_data.pdf != ""} class="hymn-link"><a href={@hymn_data.pdf}>open as PDF</a></span>
+            <span :if={@hymn_data.pdf != ""} class="hymn-link">
+              <a href={@hymn_data.pdf}>open as PDF</a>
+            </span>
           </span>
         </div>
         <%= if @verses do %>
@@ -677,13 +696,18 @@ defmodule RostrumWeb.CoreComponents do
   end
 
   attr :announcement, :any, required: true
+
   def render_announcement(assigns) do
     import Phoenix.HTML
-    rendered = case Earmark.as_html(assigns.announcement.description) do
-      {:ok, html, _} -> html
-      {:error, html, _e} ->
-        html
-    end
+
+    rendered =
+      case Earmark.as_html(assigns.announcement.description) do
+        {:ok, html, _} ->
+          html
+
+        {:error, html, _e} ->
+          html
+      end
 
     assigns =
       assigns
@@ -700,13 +724,18 @@ defmodule RostrumWeb.CoreComponents do
   end
 
   attr :event, :any, required: true
+
   def render_calendar_event(assigns) do
     import Phoenix.HTML
-    rendered = case Earmark.as_html(assigns.event.description) do
-      {:ok, html, _} -> html
-      {:error, html, _e} ->
-        html
-    end
+
+    rendered =
+      case Earmark.as_html(assigns.event.description) do
+        {:ok, html, _} ->
+          html
+
+        {:error, html, _e} ->
+          html
+      end
 
     desc = assigns.event.time_description
     dt = assigns.event.event_date
@@ -716,20 +745,34 @@ defmodule RostrumWeb.CoreComponents do
         desc
       else
         if dt,
-           do: Timex.format!(dt, "%A, %B %d, %Y at %l:%M %p", :strftime),
-           else: ""
+          do: Timex.format!(dt, "%A, %B %d, %Y at %l:%M %p", :strftime),
+          else: ""
+      end
+
+    ical_dat =
+      if dt do
+        ical_string(
+          "rostrumevent#{assigns.event.id}",
+          ical_date_fmt(dt),
+          ical_date_fmt(DateTime.add(dt, 1, :hour)),
+          assigns.event.title,
+          assigns.event.description
+        )
+        |> Base.encode64()
       end
 
     assigns =
       assigns
       |> assign(:td_desc, td_desc)
       |> assign(:rendered, rendered)
+      |> assign(:ical_dat, ical_dat)
 
     ~H"""
     <div class="calendar-event">
       <div class="event-metadata">
         <span class="event-title">{@event.title}</span>
         <span class="event-datetime">{@td_desc}</span>
+        <a :if={@ical_dat} class="event-ical-link" href={"data:text/calendar;base64,#{@ical_dat}"} download="event.ics">Add to calendar</a>
       </div>
       <div class="event-description">
         {raw(@rendered)}
@@ -738,8 +781,50 @@ defmodule RostrumWeb.CoreComponents do
     """
   end
 
+  defp ical_date_fmt(date) do
+    date
+    |> to_string()
+    |> String.replace(~r/-|:/, "")
+    |> String.replace(" ", "T")
+  end
+
+  defp ical_string(id, start_ts, end_ts, title, description) do
+    """
+    BEGIN:VCALENDAR
+    VERSION:2.0
+    PRODID:-//hacksw/handcal//NONSGML v1.0//EN
+    BEGIN:VTIMEZONE
+    TZID:America/Denver
+    BEGIN:DAYLIGHT
+    TZOFFSETFROM:-0700
+    DTSTART:20070311T020000
+    RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+    TZNAME:MDT
+    TZOFFSETTO:-0600
+    END:DAYLIGHT
+    BEGIN:STANDARD
+    TZOFFSETFROM:-0600
+    DTSTART:20071104T020000
+    RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+    TZNAME:MST
+    TZOFFSETTO:-0700
+    END:STANDARD
+    END:VTIMEZONE
+    BEGIN:VEVENT
+    DTEND;TZID=America/Denver:20241227T190000
+    UID:#{id}
+    DTSTART;TZID=America/Denver:#{start_ts}
+    DTEND;TZID=America/Denver:#{end_ts}
+    SUMMARY:#{title}
+    DESCRIPTION:#{description}
+    END:VEVENT
+    END:VCALENDAR
+    """
+  end
+
   defp format_verses(""), do: nil
   defp format_verses(nil), do: nil
+
   defp format_verses(verse_string) do
     digits =
       Regex.scan(~r/\d+/, verse_string)
@@ -780,14 +865,19 @@ defmodule RostrumWeb.CoreComponents do
 
   attr :date, :any, required: true
   attr :format, :any, default: ""
+
   def format_date(assigns) do
     import Phoenix.HTML
-    fmt = case assigns.format do
-      "short" -> "%d&nbsp;%b&nbsp;%Y"
-      _ -> "%A, %B %d, %Y"
-    end
+
+    fmt =
+      case assigns.format do
+        "short" -> "%d&nbsp;%b&nbsp;%Y"
+        _ -> "%A, %B %d, %Y"
+      end
+
     with {:ok, fmtd} <- Timex.format(assigns.date, fmt, :strftime) do
       assigns = assign(assigns, :fmtd, fmtd)
+
       ~H"""
       {raw(@fmtd)}
       """
