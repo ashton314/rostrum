@@ -10,6 +10,7 @@ defmodule RostrumWeb.MeetingLive.Show do
 
   @impl true
   def handle_params(%{"id" => id} = params, _, socket) do
+    {id, _} = Integer.parse(id)
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
