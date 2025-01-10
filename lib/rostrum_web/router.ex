@@ -21,6 +21,9 @@ defmodule RostrumWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/privacy", PageController, :privacy
+    get "/about", PageController, :about
+    get "/donate", PageController, :donate
     get "/meeting/:unit_slug", PageController, :meeting_render
   end
 
