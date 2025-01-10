@@ -1,6 +1,8 @@
 <header class="px-4 sm:px-6 lg:px-8">
-  <div class="flex justify-between border-b border-zinc-100 py-1">
-    <div class="flex items-center gap-4 pr-8 text-3xl">
+  <div class="flex justify-between border-b border-zinc-100 py-2">
+
+    <!-- Logo Section -->
+    <div class="flex items-center gap-4 text-3xl">
       <a href="/dash">
         <svg version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="704 354.93176 341.5 436.5487" class="size-10">
           <defs>
@@ -31,13 +33,13 @@
       </a>
     </div>
 
-    <div class="flex flex-row items-center gap-8 px-auto">
+    <div class="hidden md:flex flex-row items-center gap-8 px-auto">
       <a href="/meetings" class="p-2 hover:bg-slate-50 rounded-lg">Meetings</a>
       <a href="/announcements" class="p-2 hover:bg-slate-50 rounded-lg">Announcements</a>
       <a href="/calendar_events" class="p-2 hover:bg-slate-50 rounded-lg">Calendar Events</a>
     </div>
 
-    <div class="flex flex-row items-center gap-4 py-2 px-4 sm:px-6 lg:px-8">
+    <div class="hidden md:flex flex-row items-center gap-4 py-2 px-4 lg:px-8">
       <%= if @current_user do %>
       <%= if @current_unit do %>
       <div class="flex text-[0.8125rem] leading-6 p-2 text-zinc-900 border-2 border-white hover:bg-slate-50 rounded-lg">
@@ -83,11 +85,77 @@
       </div>
       <% end %>
     </div>
+
+    <!-- Hamburger Menu Button (Visible on Mobile) -->
+    <label for="menu-toggle" class="md:hidden cursor-pointer pt-3" aria-label="Toggle navigation">
+      <!-- Hamburger Icon -->
+      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </label>
+  </div>
+
+  <!-- Mobile Menu (Hidden by Default) -->
+  <input type="checkbox" id="menu-toggle" class="hidden" />
+  <div id="mobile-menu" class="md:hidden bg-white border-b border-zinc-100">
+    <!-- Mobile Navigation Links -->
+    <nav class="flex flex-col space-y-1 p-4">
+      <a href="/meetings" class="p-2 hover:bg-slate-50 rounded-lg">Meetings</a>
+      <a href="/announcements" class="p-2 hover:bg-slate-50 rounded-lg">Announcements</a>
+      <a href="/calendar_events" class="p-2 hover:bg-slate-50 rounded-lg">Calendar Events</a>
+    </nav>
+
+    <!-- Mobile User Links -->
+    <div class="flex flex-col space-y-1 p-4 border-t border-zinc-100">
+      <%= if @current_user do %>
+        <%= if @current_unit do %>
+          <div class="text-[0.8125rem] leading-6 p-2 text-zinc-900 border-2 border-white hover:bg-slate-50 rounded-lg">
+            <.link href={~p"/meeting/#{@current_unit.slug}"} target="_blank">
+              <span class="block">View active meeting →</span>
+            </.link>
+          </div>
+          <div class="text-[0.8125rem] leading-6 p-2 text-zinc-900 border-2 border-white hover:bg-slate-50 rounded-lg">
+            <.link href={~p"/units"}>
+              <div>
+                <span class="block font-semibold">Unit Settings</span>
+                <span class="block">{@current_unit.name}</span>
+              </div>
+            </.link>
+          </div>
+        <% end %>
+        <div class="text-[0.8125rem] leading-6 p-2 text-zinc-900 border-2 border-white hover:bg-slate-50 rounded-lg">
+          <.link href={~p"/users/settings"}>
+            <div>
+              <span class="block font-semibold">User Settings</span>
+              <span class="block">{@current_user.email}</span>
+            </div>
+          </.link>
+        </div>
+        <div class="text-[0.8125rem] leading-6 p-2 text-zinc-900 border-2 border-white hover:bg-slate-50 rounded-lg">
+          <.link href={~p"/users/log_out"} method="delete">
+            Log out
+          </.link>
+        </div>
+      <% else %>
+        <div class="text-[0.8125rem] leading-6 p-2 text-zinc-900 border-2 border-white hover:bg-slate-50 rounded-lg">
+          <.link href={~p"/users/register"}>
+            Register
+          </.link>
+        </div>
+        <div class="text-[0.8125rem] leading-6 p-2 text-zinc-900 border-2 border-white hover:bg-slate-50 rounded-lg">
+          <.link href={~p"/users/log_in"}>
+            Log in
+          </.link>
+        </div>
+      <% end %>
+    </div>
   </div>
 </header>
+
 <main class="px-4 py-20 sm:px-6 lg:px-8">
   <div class="mx-auto max-w-4xl">
     <.flash_group flash={@flash} />
     {@inner_content}
   </div>
 </main>
+

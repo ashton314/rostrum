@@ -4,6 +4,29 @@
 
 /* This file is for your main application CSS */
 
+/* Mobile menu */
+
+/* Show mobile menu when checkbox is checked */
+#menu-toggle ~ #mobile-menu {
+    display: none;
+}
+#menu-toggle:checked ~ #mobile-menu {
+    display: block;
+}
+
+/* /\* Optional: Animate the mobile menu appearance *\/ */
+/* #mobile-menu { */
+/*     transition: max-height 0.3s ease-in-out; */
+/*     max-height: 0; */
+/*     overflow: hidden; */
+/* } */
+
+/* #menu-toggle:checked + label + #mobile-menu { */
+/*     max-height: 1000px; /\* Arbitrary large value to ensure full visibility *\/ */
+/* } */
+
+/* Program elements */
+
 .program-event h5 {
     text-transform: lowercase;
     font-variant-caps: small-caps;
