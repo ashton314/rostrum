@@ -31,7 +31,7 @@ defmodule Rostrum.Accounts.UserNotifier do
 
     #{url}
 
-    If you didn't create an account with us, please ignore this.
+    If you didn't create an account with Rostrum, please ignore this.
 
     ==============================
     """)
@@ -47,7 +47,7 @@ defmodule Rostrum.Accounts.UserNotifier do
 
     Hi #{user.email},
 
-    You can reset your password by visiting the URL below:
+    You can reset your password on Rostrum by visiting the URL below:
 
     #{url}
 
@@ -67,7 +67,7 @@ defmodule Rostrum.Accounts.UserNotifier do
 
     Hi #{user.email},
 
-    You can change your email by visiting the URL below:
+    You can change your email on Rostrum by visiting the URL below:
 
     #{url}
 
