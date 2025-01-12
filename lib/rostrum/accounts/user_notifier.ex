@@ -8,7 +8,7 @@ defmodule Rostrum.Accounts.UserNotifier do
     email =
       new()
       |> to(recipient)
-      |> from({"Rostrum", "contact@example.com"})
+      |> from({"Rostrum", "contact@rostrumprogram.net"})
       |> subject(subject)
       |> text_body(body)
 
