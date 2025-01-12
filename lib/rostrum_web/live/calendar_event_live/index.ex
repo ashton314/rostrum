@@ -23,7 +23,7 @@ defmodule RostrumWeb.CalendarEventLive.Index do
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:page_title, "New Calendar event")
-    |> assign(:calendar_event, %CalendarEvent{start_display: Timex.today("America/Denver")})
+    |> assign(:calendar_event, %CalendarEvent{start_display: Timex.today(socket.assigns.current_unit.timezone)})
   end
 
   defp apply_action(socket, :index, _params) do

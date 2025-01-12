@@ -50,7 +50,7 @@ defmodule RostrumWeb.UnitLive.AddUserComponent do
   end
 
   @impl true
-  def update(%{unit: unit} = assigns, socket) do
+  def update(%{unit: _unit} = assigns, socket) do
     {:ok,
      socket
      |> assign(assigns)

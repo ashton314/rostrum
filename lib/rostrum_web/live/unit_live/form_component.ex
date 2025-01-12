@@ -21,6 +21,7 @@ defmodule RostrumWeb.UnitLive.FormComponent do
       >
         <.input field={@form[:name]} type="text" label="Name" placeholder="e.g. Netherfield 5th Ward" />
         <.input field={@form[:slug]} type="text" label="Slug" placeholder="e.g. netherfield-5th-ward" />
+        <.input field={@form[:timezone]} type="text" label="Timezone" placeholder="America/Denver" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Unit</.button>
         </:actions>

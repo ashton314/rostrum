@@ -25,7 +25,7 @@ defmodule Rostrum.Announcements do
   end
 
   def get_active_annoucements(%Unit{} = unit) do
-    today = Timex.today("America/Denver")
+    today = Timex.today(unit.timezone)
     (from a in Announcement,
          where: a.unit_id == ^unit.id and a.start_display <= ^today and (is_nil(a.end_display) or a.end_display > ^today))
     |> Repo.all()
