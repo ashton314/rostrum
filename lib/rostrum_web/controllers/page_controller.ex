@@ -44,7 +44,7 @@ defmodule RostrumWeb.PageController do
       %Rostrum.Meetings.Meeting{} = m ->
         m = m |> Rostrum.Repo.preload([:unit])
 
-        url = "#{conn.scheme}://#{conn.host}/meetings/#{unit_slug}"
+        url = "#{conn.scheme}://#{conn.host}/meeting/#{unit_slug}"
         {fmt, content_type} =
           case Map.fetch(params, "fmt") do
             {:ok, "png"} -> {&EQRCode.png(&1, width: 600), "image/png"}
