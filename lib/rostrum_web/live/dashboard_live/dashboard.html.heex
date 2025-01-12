@@ -27,14 +27,25 @@
         </p>
       </.link>
 
-      <.link
-        href={~p"/units"}
+      <div
         class="mx-auto flex max-w-xs flex-col gap-y-4 border-2 shadow-lg rounded-lg p-8">
         <h3 class="font-semibold text-xl">Generate QR code</h3>
         <p>
           Generate a QR code that people can scan to view the current meeting.
         </p>
-      </.link>
+        <.link
+          href={~p"/meeting/#{@current_unit.slug}/qr_code?fmt=png"}
+          target="_download"
+          download={"rostrum_#{@current_unit.slug}_qr_code.png"}>
+          <.button>Generate PNG →</.button>
+        </.link>
+        <.link
+          href={~p"/meeting/#{@current_unit.slug}/qr_code?fmt=svg"}
+          target="_download"
+          download={"rostrum_#{@current_unit.slug}_qr_code.svg"}>
+          <.button>Generate SVG →</.button>
+        </.link>
+      </div>
 
     </dl>
   </div>

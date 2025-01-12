@@ -61,7 +61,8 @@ defmodule Rostrum.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
       {:earmark, "~> 1.4"},
-      {:timex, "~> 3.7"}
+      {:timex, "~> 3.7"},
+      {:eqrcode, "~> 0.2.0"}
     ]
   end
 

@@ -25,6 +25,7 @@ defmodule RostrumWeb.Router do
     get "/about", PageController, :about
     get "/donate", PageController, :donate
     get "/meeting/:unit_slug", PageController, :meeting_render
+    get "/meeting/:unit_slug/qr_code", PageController, :qrcode_render
   end
 
   # Other scopes may use custom stacks.

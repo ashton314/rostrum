@@ -33,4 +33,36 @@ defmodule RostrumWeb.PageController do
         |> render(:meeting)
     end
   end
+
+  def qrcode_render(conn, %{"unit_slug" => unit_slug} = params) do
+    case Accounts.find_meeting_by_slug(unit_slug) do
+      nil ->
+        conn
+        |> put_layout(html: :meeting)
+        |> render(:no_meeting)
+
+      %Rostrum.Meetings.Meeting{} = m ->
+        m = m |> Rostrum.Repo.preload([:unit])
+
+        url = "#{conn.scheme}://#{conn.host}/meetings/#{unit_slug}"
+        fmt =
+          case Map.fetch(params, "fmt") do
+            {:ok, "png"} -> &EQRCode.png(&1, width: 600)
+            _ -> &EQRCode.svg/1
+          end
+
+        code =
+          url
+          |> EQRCode.encode()
+          |> fmt.()
+
+        conn
+        |> assign(:meeting, m)
+        |> assign(:slug, url)
+        |> assign(:code, code)
+        |> put_root_layout(html: false)
+        |> put_layout(html: false)
+        |> render(:qrcode)
+    end
+  end
 end
