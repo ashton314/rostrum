@@ -45,10 +45,10 @@ defmodule RostrumWeb.PageController do
         m = m |> Rostrum.Repo.preload([:unit])
 
         url = "#{conn.scheme}://#{conn.host}/meetings/#{unit_slug}"
-        fmt =
+        {fmt, content_type} =
           case Map.fetch(params, "fmt") do
-            {:ok, "png"} -> &EQRCode.png(&1, width: 600)
-            _ -> &EQRCode.svg/1
+            {:ok, "png"} -> {&EQRCode.png(&1, width: 600), "image/png"}
+            _ -> {&EQRCode.svg/1, "image/svg+xml"}
           end
 
         code =
@@ -62,6 +62,7 @@ defmodule RostrumWeb.PageController do
         |> assign(:code, code)
         |> put_root_layout(html: false)
         |> put_layout(html: false)
+        |> put_resp_content_type(content_type)
         |> render(:qrcode)
     end
   end
