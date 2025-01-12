@@ -192,7 +192,7 @@ defmodule RostrumWeb.UserAuth do
     if socket.assigns.current_user do
       {:cont, socket}
     else
-      {:halt, redirect(socket, to: "/login")}
+      {:halt, redirect(socket, to: ~p"/users/log_in")}
     end
   end
 
