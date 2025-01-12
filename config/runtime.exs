@@ -1,4 +1,5 @@
 import Config
+require Logger
 
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the
@@ -50,6 +51,8 @@ if config_env() == :prod do
 
   host = System.get_env("PHX_HOST") || "example.com"
   port = String.to_integer(System.get_env("PORT") || "4000")
+
+  Logger.alert("HOST DETECTED: #{host}")
 
   config :rostrum, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 

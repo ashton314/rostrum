@@ -119,8 +119,6 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
   defp save_event(socket, :new_event, event_params) do
     cs = Event.changeset(socket.assigns.event, event_params)
 
-    dbg(socket.assigns)
-
     if cs.valid? do
       {:ok, e} = Ecto.Changeset.apply_action(cs, :edit)
 
@@ -180,7 +178,7 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
   end
 
   defp save_meeting(socket, :edit, meeting_params) do
-    case dbg(Meetings.update_meeting(socket.assigns.meeting, meeting_params)) do
+    case Meetings.update_meeting(socket.assigns.meeting, meeting_params) do
       {:ok, meeting} ->
         notify_parent({:saved, meeting})
 
