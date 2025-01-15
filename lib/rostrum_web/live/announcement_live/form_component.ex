@@ -1,4 +1,5 @@
 defmodule RostrumWeb.AnnouncementLive.FormComponent do
+alias Rostrum.DateUtils
   use RostrumWeb, :live_component
 
   alias Rostrum.Announcements
@@ -93,7 +94,11 @@ defmodule RostrumWeb.AnnouncementLive.FormComponent do
 
   defp save_announcement(socket, :edit, announcement_params) do
     unit = socket.assigns.current_unit
-    announcement_params = Map.put(announcement_params, "unit_id", unit.id)
+    announcement_params =
+      announcement_params
+      |> Map.put("unit_id", unit.id)
+      |> DateUtils.params_to_utc(["start_display", "end_display"], unit.timezone)
+
     case Announcements.update_announcement(socket.assigns.announcement, announcement_params) do
       {:ok, announcement} ->
         notify_parent({:saved, announcement})
@@ -110,7 +115,10 @@ defmodule RostrumWeb.AnnouncementLive.FormComponent do
 
   defp save_announcement(socket, :new, announcement_params) do
     unit = socket.assigns.current_unit
-    announcement_params = Map.put(announcement_params, "unit_id", unit.id)
+    announcement_params =
+      announcement_params
+      |> Map.put("unit_id", unit.id)
+      |> DateUtils.params_to_utc(["start_display", "end_display"], unit.timezone)
     case Announcements.create_announcement(announcement_params) do
       {:ok, announcement} ->
         notify_parent({:saved, announcement})
