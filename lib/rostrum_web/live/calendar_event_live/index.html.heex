@@ -17,7 +17,7 @@
     <%= if is_binary(calendar_event.time_description) and (calendar_event.time_description) != "" do %>
     {calendar_event.time_description}
     <% else %>
-    <.format_datetime calendar_event.event_date)} datetime={calendar_event.event_date} tz={@current_unit.timezone} />
+    <.format_datetime :if={calendar_event.event_date} datetime={calendar_event.event_date} tz={@current_unit.timezone} />
     <% end %>
   </:col>
   <:col :let={{_id, calendar_event}} label="Title">{calendar_event.title}</:col>

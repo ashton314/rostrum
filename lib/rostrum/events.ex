@@ -25,9 +25,10 @@ defmodule Rostrum.Events do
   end
 
   def get_active_calendar_events(%Unit{} = unit) do
-    today = Timex.now() |> Timex.add(Timex.Duration.from_hours(12))
+    today = Timex.now()
+    today_shift = Timex.now() |> Timex.add(Timex.Duration.from_hours(-12))
     (from a in CalendarEvent,
-         where: a.unit_id == ^unit.id and a.start_display <= ^today and (is_nil(a.event_date) or a.event_date >= ^today))
+         where: a.unit_id == ^unit.id and a.start_display <= ^today and (is_nil(a.event_date) or a.event_date >= ^today_shift))
     |> Repo.all()
   end
 

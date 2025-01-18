@@ -699,7 +699,7 @@ defmodule RostrumWeb.CoreComponents do
   end
 
   attr :announcement, :any, required: true
-
+  attr :unit, Rostrum.Accounts.Unit, required: true
   def render_announcement(assigns) do
     import Phoenix.HTML
 
@@ -727,7 +727,7 @@ defmodule RostrumWeb.CoreComponents do
   end
 
   attr :event, :any, required: true
-
+  attr :unit, Rostrum.Accounts.Unit, required: true
   def render_calendar_event(assigns) do
     import Phoenix.HTML
 
