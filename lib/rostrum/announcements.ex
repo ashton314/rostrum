@@ -27,7 +27,7 @@ defmodule Rostrum.Announcements do
   def get_active_annoucements(%Unit{} = unit) do
     today = Timex.today()
     (from a in Announcement,
-         where: a.unit_id == ^unit.id and a.start_display <= ^today and (is_nil(a.end_display) or a.end_display > ^today))
+         where: a.unit_id == ^unit.id and a.start_display <= ^today and (is_nil(a.end_display) or a.end_display >= ^today))
     |> Repo.all()
   end
 

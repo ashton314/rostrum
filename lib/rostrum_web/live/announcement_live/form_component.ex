@@ -97,7 +97,6 @@ alias Rostrum.DateUtils
     announcement_params =
       announcement_params
       |> Map.put("unit_id", unit.id)
-      |> DateUtils.params_to_utc(["start_display", "end_display"], unit.timezone)
 
     case Announcements.update_announcement(socket.assigns.announcement, announcement_params) do
       {:ok, announcement} ->
@@ -118,7 +117,7 @@ alias Rostrum.DateUtils
     announcement_params =
       announcement_params
       |> Map.put("unit_id", unit.id)
-      |> DateUtils.params_to_utc(["start_display", "end_display"], unit.timezone)
+
     case Announcements.create_announcement(announcement_params) do
       {:ok, announcement} ->
         notify_parent({:saved, announcement})

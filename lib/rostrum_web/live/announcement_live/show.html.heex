@@ -11,8 +11,8 @@
 </.header>
 
 <.list>
-  <:item title="Start display">{@announcement.start_display}</:item>
-  <:item title="End display">{@announcement.end_display}</:item>
+  <:item title="Start display"><.format_date date={@announcement.start_display} /></:item>
+  <:item title="End display"><.format_date date={@announcement.end_display} /></:item>
   <:item title="Title">{@announcement.title}</:item>
   <:item title="Description"><div class="announcement-description program-event">{raw(@preview)}</div></:item>
 </.list>

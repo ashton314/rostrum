@@ -17,7 +17,13 @@
       <li><span class="font-semibold font-sm">Start</span></li>
       <li class="font-normal font-sm"><.format_date format="short" date={announcement.start_display} /></li>
       <li><span class="font-semibold font-sm">End</span></li>
-      <li class="font-normal font-sm"><.format_date format="short" date={announcement.end_display} /></li>
+      <li class="font-normal font-sm">
+        <%= if announcement.end_display do %>
+        <.format_date format="short" date={announcement.end_display} />
+        <% else %>
+        <span class="italic">Indefinite</span>
+        <% end %>
+      </li>
     </ul>
   </:col>
   <:col :let={{_id, announcement}} label="Title">{announcement.title}</:col>
