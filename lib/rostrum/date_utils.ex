@@ -1,5 +1,12 @@
 defmodule Rostrum.DateUtils do
-  def to_utc(datetime, source_tz) do
+
+  def to_utc(dts, source_tz) when is_binary(dts) do
+    dts
+    |> Timex.parse!("%FT%H:%M", :strftime)
+    |> to_utc(source_tz)
+  end
+
+  def to_utc(%NaiveDateTime{} = datetime, source_tz) do
     with {:ok, dtz} <- DateTime.from_naive(datetime, source_tz) do
       DateTime.shift_zone(dtz, "UTC")
     end

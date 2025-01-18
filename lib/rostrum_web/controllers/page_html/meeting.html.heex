@@ -36,11 +36,11 @@
 <h3>Announcements</h3>
 
 <div :for={a <- @announcements}>
-  <.render_announcement announcement={a} />
+  <.render_announcement unit={@meeting.unit} announcement={a} />
 </div>
 
 <h3>Upcoming Events</h3>
 
 <div :for={e <- @calendar_events}>
-  <.render_calendar_event event={e} />
+  <.render_calendar_event event={e} unit={@meeting.unit} />
 </div>

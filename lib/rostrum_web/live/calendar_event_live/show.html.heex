@@ -1,18 +1,18 @@
-<.back navigate={~p"/calendar_events"}>Back to calendar_events</.back>
+<.back navigate={~p"/calendar_events"}>Back to calendar events</.back>
 
 <.header>
   Calendar event {@calendar_event.id}
-  <:subtitle>This is a calendar_event record from your database.</:subtitle>
+  <:subtitle>This is a calendar event record from your database.</:subtitle>
   <:actions>
     <.link patch={~p"/calendar_events/#{@calendar_event}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit calendar_event</.button>
+      <.button>Edit calendar event</.button>
     </.link>
   </:actions>
 </.header>
 
 <.list>
-  <:item title="Start display">{@calendar_event.start_display}</:item>
-  <:item title="Event date">{@calendar_event.event_date}</:item>
+  <:item title="Start display"><.format_date date={@calendar_event.start_display} /></:item>
+  <:item title="Event date"><.format_datetime :if={@calendar_event.event_date} datetime={@calendar_event.event_date} tz={@current_unit.timezone} /></:item>
   <:item title="Time description">{@calendar_event.time_description}</:item>
   <:item title="Title">{@calendar_event.title}</:item>
   <:item title="Description">{@calendar_event.description}</:item>

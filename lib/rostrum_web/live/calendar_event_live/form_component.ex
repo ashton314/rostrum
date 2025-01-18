@@ -81,7 +81,9 @@ defmodule RostrumWeb.CalendarEventLive.FormComponent do
       end
 
     desc = calendar_event.time_description
-    dt = calendar_event.event_date |> dbg()
+    dt = calendar_event.event_date &&
+      calendar_event.event_date
+      |> DateTime.shift_zone!(assigns.current_unit.timezone)
 
     td_desc =
       if is_binary(desc) && desc != "" do
@@ -90,6 +92,12 @@ defmodule RostrumWeb.CalendarEventLive.FormComponent do
         if dt,
            do: Timex.format!(dt, "%A, %B %d, %Y at %l:%M %p", :strftime),
            else: ""
+      end
+
+    calendar_event =
+      case calendar_event.event_date do
+        %DateTime{} = d -> %{calendar_event | event_date: DateTime.shift_zone!(d, assigns.current_unit.timezone)}
+        _ -> calendar_event
       end
 
     {:ok,
@@ -144,7 +152,7 @@ defmodule RostrumWeb.CalendarEventLive.FormComponent do
     calendar_event_params =
       calendar_event_params
       |> Map.put("unit_id", unit.id)
-      |> DateUtils.params_to_utc(["start_display", "event_date"], unit.timezone)
+      |> DateUtils.params_to_utc(["event_date"], unit.timezone)
 
     case Events.update_calendar_event(socket.assigns.calendar_event, calendar_event_params) do
       {:ok, calendar_event} ->
@@ -164,8 +172,9 @@ defmodule RostrumWeb.CalendarEventLive.FormComponent do
     unit = socket.assigns.current_unit
     calendar_event_params =
       calendar_event_params
+      |> dbg()
       |> Map.put("unit_id", unit.id)
-      |> DateUtils.params_to_utc(["start_display", "event_date"], unit.timezone)
+      |> DateUtils.params_to_utc(["event_date"], unit.timezone)
 
     case Events.create_calendar_event(calendar_event_params) do
       {:ok, calendar_event} ->

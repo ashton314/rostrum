@@ -741,7 +741,9 @@ defmodule RostrumWeb.CoreComponents do
       end
 
     desc = assigns.event.time_description
-    dt = assigns.event.event_date
+    dt = assigns.event.event_date &&
+      assigns.event.event_date
+      |> DateTime.shift_zone!(assigns.unit.timezone)
 
     td_desc =
       if is_binary(desc) && desc != "" do
@@ -866,9 +868,36 @@ defmodule RostrumWeb.CoreComponents do
     """
   end
 
+  attr :datetime, DateTime, required: true
+  attr :tz, :string, required: true
+  attr :format, :any, default: ""
+  def format_datetime(assigns) do
+    import Phoenix.HTML
+
+    fmt =
+      case assigns.format do
+        "short" -> "%d&nbsp;%b&nbsp;%Y %H:%M"
+        _ -> "%A, %B %d, %Y at %I:%M %p"
+      end
+
+    dtz = DateTime.shift_zone!(assigns.datetime, assigns.tz)
+
+    with {:ok, fmtd} <- Timex.format(dtz, fmt, :strftime) do
+      assigns = assign(assigns, :fmtd, fmtd)
+
+      ~H"""
+      {raw(@fmtd)}
+      """
+    else
+      _ ->
+        ~H"""
+        {@date}
+        """
+    end
+  end
+
   attr :date, :any, required: true
   attr :format, :any, default: ""
-
   def format_date(assigns) do
     import Phoenix.HTML
 
