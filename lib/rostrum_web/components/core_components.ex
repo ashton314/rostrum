@@ -761,6 +761,7 @@ defmodule RostrumWeb.CoreComponents do
           "rostrumevent#{assigns.event.id}",
           ical_date_fmt(dt),
           ical_date_fmt(DateTime.add(dt, 1, :hour)),
+          assigns.unit.timezone,
           assigns.event.title,
           assigns.event.description
         )
@@ -788,39 +789,21 @@ defmodule RostrumWeb.CoreComponents do
   end
 
   defp ical_date_fmt(date) do
-    date
-    |> to_string()
-    |> String.replace(~r/-|:/, "")
-    |> String.replace(" ", "T")
+    Timex.format!(date, "%Y%m%dT%H%M%SZ", :strftime)
   end
 
-  defp ical_string(id, start_ts, end_ts, title, description) do
+  defp ical_string(id, start_ts, end_ts, tz, title, description) do
     """
     BEGIN:VCALENDAR
     VERSION:2.0
-    PRODID:-//hacksw/handcal//NONSGML v1.0//EN
     BEGIN:VTIMEZONE
-    TZID:America/Denver
-    BEGIN:DAYLIGHT
-    TZOFFSETFROM:-0700
-    DTSTART:20070311T020000
-    RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
-    TZNAME:MDT
-    TZOFFSETTO:-0600
-    END:DAYLIGHT
-    BEGIN:STANDARD
-    TZOFFSETFROM:-0600
-    DTSTART:20071104T020000
-    RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
-    TZNAME:MST
-    TZOFFSETTO:-0700
-    END:STANDARD
+    TZID:#{tz}
     END:VTIMEZONE
     BEGIN:VEVENT
-    DTEND;TZID=America/Denver:20241227T190000
+    DTEND;TZID=#{tz}:20241227T190000
     UID:#{id}
-    DTSTART;TZID=America/Denver:#{start_ts}
-    DTEND;TZID=America/Denver:#{end_ts}
+    DTSTART;TZID=#{tz}:#{start_ts}
+    DTEND;TZID=#{tz}:#{end_ts}
     SUMMARY:#{title}
     DESCRIPTION:#{description}
     END:VEVENT
