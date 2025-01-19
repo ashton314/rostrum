@@ -46,13 +46,13 @@ p {
 }
 
 h1 {
-    font-weight: 300;
+    font-weight: 400;
     margin-top: 1.5rem;
     margin-bottom: 0.3rem;
 }
 
 h2 {
-    font-weight: 300;
+    font-weight: 400;
     color: var(--body-accent-font-color);
     font-size: 1.3rem;
     margin-top: 0.3rem;
@@ -60,6 +60,7 @@ h2 {
 
 /* "Program", "Announcements", etc. */
 h3 {
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
     text-align: center;
     font-size: 1.3rem;
     font-weight: 300;
@@ -79,6 +80,7 @@ h4 {
 /* "Speaker" "Rest Hymn" etc. */
 h5 {
     font-weight: 600;
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
     color: var(--body-accent-font-color);
     text-transform: lowercase;
     font-variant-caps: small-caps;
