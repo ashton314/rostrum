@@ -4,6 +4,7 @@ defmodule Rostrum.Accounts do
   """
 
   import Ecto.Query, warn: false
+  alias Rostrum.Meetings
   alias Rostrum.Repo
 
   alias Rostrum.Accounts.{User, UserToken, UserNotifier, Unit, UserUnit}
@@ -542,11 +543,13 @@ defmodule Rostrum.Accounts do
   end
 
   def get_active_meeting(%Unit{} = unit) do
-    (from m in Meeting,
-         where: m.unit_id == ^unit.id,
-         order_by: [desc: m.date],
-         limit: 1)
-    |> Repo.one()
+    {past, active, future} = Meetings.get_partitioned_meetings(unit)
+
+    case {past, active, future} do
+      {_, %Meeting{} = a, _} -> a
+      {_, nil, [a | _]} -> a
+      {as, nil, []} -> List.last(as)
+    end
   end
 
   def find_meeting_by_slug(slug) do

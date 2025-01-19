@@ -517,6 +517,7 @@ defmodule RostrumWeb.CoreComponents do
   """
   attr :id, :string, required: true
   attr :rows, :list, required: true
+  attr :class, :string, default: nil
   attr :row_id, :any, default: nil, doc: "the function for generating the row id"
   attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
 
@@ -538,7 +539,7 @@ defmodule RostrumWeb.CoreComponents do
 
     ~H"""
     <div class="px-4 sm:overflow-visible sm:px-0">
-      <table class="w-full mt-11">
+      <table class={["w-full mt-11", @class]}>
         <thead class="text-sm text-left leading-6 text-zinc-500">
           <tr>
             <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal">{col[:label]}</th>

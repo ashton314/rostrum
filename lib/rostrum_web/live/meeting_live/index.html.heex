@@ -1,8 +1,8 @@
 <.header>
-  Listing Meetings
+  Meetings
   <:actions>
     <.link patch={~p"/meetings/new?clone=1"}>
-      <.button>Clone Last Meeting</.button>
+      <button class="rounded-lg bg-green-700 hover:bg-green-600 mx-2 py-2 px-3 text-sm font-semibold leading-6 text-white">Clone Last Meeting</button>
     </.link>
     <.link patch={~p"/meetings/new"}>
       <.button>New Blank Meeting</.button>
@@ -10,29 +10,91 @@
   </:actions>
 </.header>
 
-<.table
-  id="meetings"
-  rows={@streams.meetings}
-  row_click={fn {_id, meeting} -> JS.navigate(~p"/meetings/#{meeting}") end}
->
-  <:col :let={{_id, meeting}} label="Date"><.format_date date={meeting.date} /></:col>
-  <:col :let={{_id, meeting}} label="Conducting">{meeting.conducting}</:col>
-  <:col :let={{_id, meeting}} label="Hymns">{list_hymns(meeting)}</:col>
-  <:action :let={{_id, meeting}}>
-    <div class="sr-only">
-      <.link navigate={~p"/meetings/#{meeting}"}>Show</.link>
+<div>
+  <h2 class="text-lg font-semibold mt-11">Active meeting</h2>
+
+  <%= if @current do %>
+  <div
+    class="bg-green-100 hover:bg-green-200 sm:rounded-xl p-4 my-4 hover:cursor-pointer"
+    phx-click={JS.navigate(~p"/meetings/#{@current.id}")}>
+
+    <div class="flex flex-row">
+      <div class="basis-1/3">
+        <h4 class="block text-sm text-zinc-500">Date</h4>
+        <span><.format_date date={@current.date} /></span>
+      </div>
+      <div class="basis-1/3">
+        <div :if={@current.conducting}>
+          <h4 class="block text-sm text-zinc-500">Conducting</h4>
+          {@current.conducting}
+        </div>
+      </div>
+      <div class="basis-1/3">
+        <h4 class="block text-sm text-zinc-500">Hymns</h4>
+        {list_hymns(@current)}
+      </div>
     </div>
-    <.link patch={~p"/meetings/#{meeting}/edit"}>Edit</.link>
-  </:action>
-  <:action :let={{id, meeting}}>
-    <.link
-      phx-click={JS.push("delete", value: %{id: meeting.id}) |> hide("##{id}")}
-      data-confirm="Are you sure?"
-    >
-      Delete
-    </.link>
-  </:action>
-</.table>
+  </div>
+  <% else %>
+  No upcoming meeting
+  <% end %>
+</div>
+
+<div>
+  <h2 class="text-lg font-semibold mt-11">Future meetings</h2>
+  <.table
+    id="future_meetings"
+    class="mt-2"
+    rows={@streams.future}
+    row_click={fn {_id, meeting} -> JS.navigate(~p"/meetings/#{meeting}") end}
+  >
+    <:col :let={{_id, meeting}} label="Date"><.format_date date={meeting.date} /></:col>
+    <:col :let={{_id, meeting}} label="Conducting">{meeting.conducting}</:col>
+    <:col :let={{_id, meeting}} label="Hymns">{list_hymns(meeting)}</:col>
+    <:action :let={{_id, meeting}}>
+      <div class="sr-only">
+        <.link navigate={~p"/meetings/#{meeting}"}>Show</.link>
+      </div>
+      <.link patch={~p"/meetings/#{meeting}/edit"}>Edit</.link>
+    </:action>
+    <:action :let={{id, meeting}}>
+      <.link
+        phx-click={JS.push("delete", value: %{id: meeting.id}) |> hide("##{id}")}
+        data-confirm="Are you sure?"
+      >
+        Delete
+      </.link>
+    </:action>
+  </.table>
+</div>
+
+<div>
+  <h2 class="text-lg font-semibold mt-11">Past meetings</h2>
+  <.table
+    id="future_meetings"
+    class="mt-2"
+    rows={@streams.past}
+    row_click={fn {_id, meeting} -> JS.navigate(~p"/meetings/#{meeting}") end}
+  >
+    <:col :let={{_id, meeting}} label="Date"><.format_date date={meeting.date} /></:col>
+    <:col :let={{_id, meeting}} label="Conducting">{meeting.conducting}</:col>
+    <:col :let={{_id, meeting}} label="Hymns">{list_hymns(meeting)}</:col>
+    <:action :let={{_id, meeting}}>
+      <div class="sr-only">
+        <.link navigate={~p"/meetings/#{meeting}"}>Show</.link>
+      </div>
+      <.link patch={~p"/meetings/#{meeting}/edit"}>Edit</.link>
+    </:action>
+    <:action :let={{id, meeting}}>
+      <.link
+        phx-click={JS.push("delete", value: %{id: meeting.id}) |> hide("##{id}")}
+        data-confirm="Are you sure?"
+      >
+        Delete
+      </.link>
+    </:action>
+  </.table>
+</div>
 
 <.modal :if={@live_action in [:new, :edit]} id="meeting-modal" show on_cancel={JS.patch(~p"/meetings")}>
   <.live_component

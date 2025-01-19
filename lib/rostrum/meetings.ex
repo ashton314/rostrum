@@ -26,6 +26,25 @@ defmodule Rostrum.Meetings do
   end
 
   @doc """
+  Return {past, active, future} meetings in a tuple.
+  """
+  def get_partitioned_meetings(%Unit{} = unit) do
+    today = Timex.now(unit.timezone)
+    all = list_meetings(unit) |> Enum.group_by(&Timex.before?(&1.date, today))
+
+    past = Map.get(all, true, [])
+    future_present = Map.get(all, false, []) |> Enum.reverse()
+
+    {current, future} =
+      case future_present do
+        [c | f] -> {c, f}
+        [] -> {nil, []}
+      end
+
+    {past, current, future}
+  end
+
+  @doc """
   Gets a single meeting.
 
   Raises `Ecto.NoResultsError` if the Meeting does not exist.

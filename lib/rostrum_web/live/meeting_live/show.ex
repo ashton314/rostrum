@@ -91,6 +91,15 @@ defmodule RostrumWeb.MeetingLive.Show do
     update_events(socket, params)
   end
 
+  def handle_event("delete", _, socket) do
+    meeting = socket.assigns.meeting
+    {:ok, _} = Meetings.delete_meeting(meeting)
+    {:noreply,
+     socket
+     |> put_flash(:info, "Meeting deleted successfully")
+     |> push_navigate(to: ~p"/meetings/") }
+  end
+
   @impl true
   def handle_info({RostrumWeb.MeetingLive.NewEventForm, {:saved, meeting}}, socket) do
     {:noreply, assign(socket, :meeting, meeting)}

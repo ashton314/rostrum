@@ -7,7 +7,14 @@ defmodule RostrumWeb.MeetingLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :meetings, Meetings.list_meetings(socket.assigns.current_unit))}
+    {past, current, future} = Meetings.get_partitioned_meetings(socket.assigns.current_unit)
+    socket =
+      socket
+      |> stream(:past, past)
+      |> assign(:current, current)
+      |> stream(:future, future)
+
+    {:ok, socket}
   end
 
   @impl true
@@ -42,7 +49,7 @@ defmodule RostrumWeb.MeetingLive.Index do
 
   @impl true
   def handle_info({RostrumWeb.MeetingLive.FormComponent, {:saved, meeting}}, socket) do
-    {:noreply, stream_insert(socket, :meetings, meeting)}
+    {:noreply, stream_insert(socket, :future, meeting)}
   end
 
   @impl true
@@ -50,7 +57,7 @@ defmodule RostrumWeb.MeetingLive.Index do
     meeting = Meetings.get_meeting!(id, socket.assigns.current_unit)
     {:ok, _} = Meetings.delete_meeting(meeting)
 
-    {:noreply, stream_delete(socket, :meetings, meeting)}
+    {:noreply, stream_delete(socket, :future, meeting)}
   end
 
   def list_hymns(%Meeting{} = meeting) do

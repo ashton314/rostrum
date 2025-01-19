@@ -1,5 +1,5 @@
-<h1 class="header title">{@meeting.title}</h1>
-<h2 class="header">{@meeting.unit.name}</h2>
+<h1 class="header title">{@meeting.title || "Meeting"}</h1>
+<h2 class="header">{@meeting.unit.name || ""}</h2>
 
 <div :if={@meeting.welcome_blurb} class="welcome-blurb">{@meeting.welcome_blurb}</div>
 
@@ -29,18 +29,18 @@
 
 <h3>Program</h3>
 
-<div :for={event <- @meeting.events["events"]}>
+<div :for={event <- @meeting.events["events"] || []}>
   <.render_event event={event} />
 </div>
 
 <h3>Announcements</h3>
 
-<div :for={a <- @announcements}>
+<div :for={a <- @announcements || []}>
   <.render_announcement unit={@meeting.unit} announcement={a} />
 </div>
 
 <h3>Upcoming Events</h3>
 
-<div :for={e <- @calendar_events}>
+<div :for={e <- @calendar_events || []}>
   <.render_calendar_event event={e} unit={@meeting.unit} />
 </div>
