@@ -29,7 +29,12 @@
 
 <%= if @business do %>
 <h3>Business</h3>
-<p>{@business}</p>
+<div class="business">
+<.render_markdown source={@business} />
+<div class="business-help">
+  This box is only visible to logged-in members of this unit. The congregation will not be able to see this.
+</div>
+</div>
 <% end %>
 
 <h3>Program</h3>

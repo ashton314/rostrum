@@ -699,6 +699,26 @@ defmodule RostrumWeb.CoreComponents do
     """
   end
 
+  attr :source, :string, required: true
+  def render_markdown(assigns) do
+    import Phoenix.HTML
+
+    case Earmark.as_html(assigns.source) do
+      {:ok, html, _} ->
+        assigns = assign(assigns, :rendered, html)
+        ~H"""
+        {raw(@rendered)}
+        """
+      {:error, html, e} ->
+        assigns = assign(assigns, :rendered, html)
+        assigns = assign(assigns, :err, e)
+        ~H"""
+          {raw(@rendered)}
+          <span>Error formatting markdown: {@err}</span>
+        """
+    end
+  end
+
   attr :announcement, :any, required: true
   attr :unit, Rostrum.Accounts.Unit, required: true
   def render_announcement(assigns) do

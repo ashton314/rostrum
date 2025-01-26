@@ -25,7 +25,7 @@
   <:item title={@meeting.accompanist_term}>{@meeting.accompanist}</:item>
   <:item title="Welcome blurb">{@meeting.welcome_blurb}</:item>
   <:item title="Topic">{@meeting.topic}</:item>
-  <:item title="Business">{@meeting.business}</:item>
+  <:item title="Business"><.render_markdown source={@meeting.business} /></:item>
 </.list>
 
 <.events_editor meeting={@meeting} />

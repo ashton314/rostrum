@@ -1,5 +1,6 @@
 :root {
     --body-background: #f0f0f5;
+    --body-background-inset: #e5e5f0;
     --body-color: #121218;
     --body-accent-font-color: #424248;
     --link-border-color: #888;
@@ -136,6 +137,18 @@ italic {
     font-style: italic;
     text-align: center;
     margin: 1em 0;
+}
+
+.business {
+    font-size: 0.9rem;
+    padding: 1rem;
+    background-color: var(--body-background-inset);
+    border-radius: 0.5rem;
+}
+
+.business-help {
+    font-size: 0.65rem;
+    color: var(--body-accent-font-color);
 }
 
 .banner {

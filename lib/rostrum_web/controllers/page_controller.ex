@@ -16,7 +16,6 @@ defmodule RostrumWeb.PageController do
   def donate(conn, _params), do: render(conn, :donate)
 
   def meeting_render(conn, %{"unit_slug" => unit_slug} = _params) do
-    dbg(conn.assigns)
     case Accounts.find_meeting_by_slug(unit_slug) do
       nil ->
         conn
