@@ -1,5 +1,4 @@
 defmodule RostrumWeb.AnnouncementLive.FormComponent do
-alias Rostrum.DateUtils
   use RostrumWeb, :live_component
 
   alias Rostrum.Announcements

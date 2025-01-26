@@ -13,6 +13,8 @@ defmodule Rostrum.Meetings.Meeting do
     field :accompanist_term, :string, default: "Organist"
     field :chorister, :string
     field :welcome_blurb, :string, default: ""
+    field :topic, :string, default: ""
+    field :business, :string, default: ""
     belongs_to :unit, Rostrum.Accounts.Unit
 
     timestamps(type: :utc_datetime)
@@ -32,6 +34,8 @@ defmodule Rostrum.Meetings.Meeting do
       :accompanist,
       :accompanist_term,
       :welcome_blurb,
+      :topic,
+      :business,
       :chorister
     ])
     |> validate_required([:date, :unit_id])

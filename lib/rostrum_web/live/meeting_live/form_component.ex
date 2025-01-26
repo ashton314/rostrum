@@ -19,12 +19,14 @@ defmodule RostrumWeb.MeetingLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:title]} type="text" label="Meeting Title" placeholder="e.g. Fast and Testimony Meeting"/>
+        <.input field={@form[:title]} type="text" label="Meeting title" placeholder="e.g. Fast and Testimony Meeting"/>
         <.input field={@form[:date]} type="date" label="Date" />
+        <.input field={@form[:topic]} type="text" label="Meeting topic" />
         <.input field={@form[:welcome_blurb]} type="text" label="Welcome blurb" placeholder="e.g. Welcome to the Church of Jesus Christ of Latter-day Saints"/>
         <.input field={@form[:presiding]} type="text" label="Presiding" />
         <.input field={@form[:conducting]} type="text" label="Conducting" />
         <.input field={@form[:chorister]} type="text" label="Chorister" />
+        <.input field={@form[:business]} type="textarea" label="Business" help="This information will only be visible to logged-in users." />
         <.input
           field={@form[:accompanist_term]}
           type="select"

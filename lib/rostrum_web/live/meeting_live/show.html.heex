@@ -7,7 +7,7 @@
   </:subtitle>
   <:actions>
     <.link patch={~p"/meetings/#{@meeting}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit organization</.button>
+      <.button>Edit</.button>
     </.link>
 
     <.link
@@ -24,6 +24,8 @@
   <:item title="Chorister">{@meeting.chorister}</:item>
   <:item title={@meeting.accompanist_term}>{@meeting.accompanist}</:item>
   <:item title="Welcome blurb">{@meeting.welcome_blurb}</:item>
+  <:item title="Topic">{@meeting.topic}</:item>
+  <:item title="Business">{@meeting.business}</:item>
 </.list>
 
 <.events_editor meeting={@meeting} />

@@ -16,6 +16,7 @@ defmodule RostrumWeb.PageController do
   def donate(conn, _params), do: render(conn, :donate)
 
   def meeting_render(conn, %{"unit_slug" => unit_slug} = _params) do
+    dbg(conn.assigns)
     case Accounts.find_meeting_by_slug(unit_slug) do
       nil ->
         conn
@@ -24,8 +25,17 @@ defmodule RostrumWeb.PageController do
 
       %Rostrum.Meetings.Meeting{} = m ->
         m = m |> Rostrum.Repo.preload([:unit])
+
+        business =
+          if conn.assigns.current_user && Accounts.can_see_unit?(conn.assigns.current_user, m.unit_id) do
+            m.business
+          else
+            nil
+          end
+
         conn
         |> assign(:meeting, m)
+        |> assign(:business, business)
         |> assign(:announcements, Announcements.get_active_annoucements(m.unit))
         |> assign(:calendar_events, Events.get_active_calendar_events(m.unit))
         |> put_root_layout(html: :meeting_root)

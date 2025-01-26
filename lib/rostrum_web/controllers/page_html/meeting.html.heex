@@ -27,6 +27,11 @@
   </div>
 </div>
 
+<%= if @business do %>
+<h3>Business</h3>
+<p>{@business}</p>
+<% end %>
+
 <h3>Program</h3>
 
 <div :for={event <- @meeting.events["events"] || []}>
