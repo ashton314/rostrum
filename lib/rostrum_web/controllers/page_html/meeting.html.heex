@@ -43,14 +43,18 @@
   <.render_event event={event} />
 </div>
 
+<%= if length(@announcements || []) > 0 do %>
 <h3>Announcements</h3>
 
 <div :for={a <- @announcements || []}>
   <.render_announcement unit={@meeting.unit} announcement={a} />
 </div>
+<% end %>
 
+<%= if length(@calendar_events || []) > 0 do %>
 <h3>Upcoming Events</h3>
 
 <div :for={e <- @calendar_events || []}>
   <.render_calendar_event event={e} unit={@meeting.unit} />
 </div>
+<% end %>
