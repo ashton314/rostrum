@@ -24,6 +24,7 @@ defmodule RostrumWeb.Router do
     get "/privacy", PageController, :privacy
     get "/about", PageController, :about
     get "/donate", PageController, :donate
+    get "/guide", PageController, :guide
     get "/meeting/:unit_slug", PageController, :meeting_render
     get "/meeting/:unit_slug/qr_code", PageController, :qrcode_render
   end

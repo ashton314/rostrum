@@ -133,6 +133,8 @@ defmodule Rostrum.Meetings do
     %{meeting |
       id: nil,
       date: Date.add(meeting.date, 7),
+      business: "",
+      topic: "",
       events: scrub_events(meeting.events)}
   end
 

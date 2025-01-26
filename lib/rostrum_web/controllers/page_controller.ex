@@ -14,6 +14,7 @@ defmodule RostrumWeb.PageController do
   def privacy(conn, _params), do: render(conn, :privacy)
   def about(conn, _params), do: render(conn, :about)
   def donate(conn, _params), do: render(conn, :donate)
+  def guide(conn, _params), do: render(conn, :guide)
 
   def meeting_render(conn, %{"unit_slug" => unit_slug} = _params) do
     case Accounts.find_meeting_by_slug(unit_slug) do

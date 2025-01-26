@@ -140,6 +140,18 @@ italic {
     margin: 1em 0;
 }
 
+.business {
+    font-size: 0.9rem;
+    padding: 1rem;
+    background-color: var(--body-background-inset);
+    border-radius: 0.5rem;
+}
+
+.business-help {
+    font-size: 0.65rem;
+    color: var(--body-accent-font-color);
+}
+
 .banner {
     margin: -1rem auto;
     display: flex;
