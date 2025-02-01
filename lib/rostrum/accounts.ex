@@ -433,6 +433,70 @@ defmodule Rostrum.Accounts do
     end
   end
 
+  def user_permission(_, nil), do: false
+
+  def user_permission(%User{id: user_id}, %Unit{id: unit_id}) do
+    perms =
+      (from uu in UserUnit,
+            where: uu.user_id == ^user_id and uu.unit_id == ^unit_id)
+      |> Repo.one()
+
+    perms && perms.role
+  end
+
+  def user_permission(%User{} = user, unit_slug) when is_binary(unit_slug) do
+    user_permission(user, get_unit_by_slug(unit_slug))
+  end
+
+  def authorized?(_, nil, _), do: false
+
+  def authorized?(%User{} = user, %Unit{} = unit, access_level) do
+    permission = user_permission(user, unit)
+
+    case {permission, access_level} do
+      {nil, _} -> false
+      {:music, :music} -> true
+      {:music, _} -> false
+      {:editor, :music} -> true
+      {:editor, :editor} -> true
+      {:editor, :owner} -> false
+      {:owner, _} -> true
+    end
+  end
+
+  def authorized?(%User{} = user, unit_slug, access_level) when is_binary(unit_slug) do
+    authorized?(user, get_unit_by_slug(unit_slug), access_level)
+  end
+
+  @doc """
+  Set authorization level for a user, assuming the user already has
+  access to the unit. This is a "safer" version of
+  `set_authorization_level!`, which does no checks.
+  """
+  def set_authorization_level(%User{} = user, %Unit{} = unit, level, %User{} = setter) do
+    if Enum.member?([:owner, :editor, :music], level) do
+      if authorized?(setter, unit, :owner) do
+        if can_see_unit?(user, unit.id) do
+          set_authorization_level!(user, unit, level)
+          :ok
+        else
+          {:error, :user_not_in_unit}
+        end
+      else
+        {:error, :insufficient_permissions}
+      end
+    else
+      {:error, :illegal_authorization_level}
+    end
+  end
+
+  def set_authorization_level!(%User{} = user, %Unit{} = unit, level) do
+    Repo.transaction(fn ->
+      remove_user_from_unit(unit, user)
+      add_user_to_unit(user.id, unit.id, level)
+    end)
+  end
+
   @doc """
   Creates a unit.
 
@@ -523,11 +587,11 @@ defmodule Rostrum.Accounts do
     unit |> Repo.preload(:users)
   end
 
-  def add_user_to_unit(user_id, unit_id) do
+  def add_user_to_unit(user_id, unit_id, role \\ :editor) do
     user = Repo.get(User, user_id)
     unit = Repo.get(Unit, unit_id)
 
-    Repo.insert(%UserUnit{user_id: user.id, unit_id: unit.id})
+    Repo.insert(%UserUnit{user_id: user.id, unit_id: unit.id, role: role})
   end
 
   def add_user_to_unit_by_email(%Unit{} = unit, user_email) do
