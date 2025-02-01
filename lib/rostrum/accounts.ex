@@ -414,7 +414,7 @@ defmodule Rostrum.Accounts do
   end
 
   def get_unit_by_slug(slug) do
-    (from u in Unit, where: u.slug == ^slug)
+    from(u in Unit, where: u.slug == ^slug)
     |> Repo.one()
   end
 
@@ -437,8 +437,9 @@ defmodule Rostrum.Accounts do
 
   def user_permission(%User{id: user_id}, %Unit{id: unit_id}) do
     perms =
-      (from uu in UserUnit,
-            where: uu.user_id == ^user_id and uu.unit_id == ^unit_id)
+      from(uu in UserUnit,
+        where: uu.user_id == ^user_id and uu.unit_id == ^unit_id
+      )
       |> Repo.one()
 
     perms && perms.role
@@ -473,7 +474,24 @@ defmodule Rostrum.Accounts do
   access to the unit. This is a "safer" version of
   `set_authorization_level!`, which does no checks.
   """
+  @spec(
+    set_authorization_level(User.t(), Unit.t(), String.t() | :music | :editor | :owner, User.t()) ::
+      :ok,
+    {:error, atom()}
+  )
   def set_authorization_level(%User{} = user, %Unit{} = unit, level, %User{} = setter) do
+    level =
+      if is_atom(level) do
+        level
+      else
+        case level do
+          "music" -> :music
+          "editor" -> :editor
+          "owner" -> :owner
+          _ -> nil
+        end
+      end
+
     if Enum.member?([:owner, :editor, :music], level) do
       if authorized?(setter, unit, :owner) do
         if can_see_unit?(user, unit.id) do
@@ -529,6 +547,7 @@ defmodule Rostrum.Accounts do
   """
   def update_unit(%Unit{} = unit, %User{} = user, attrs) do
     assert_user_access_unit!(user, unit.id)
+
     unit
     |> Unit.changeset(attrs)
     |> Repo.update()
@@ -601,8 +620,9 @@ defmodule Rostrum.Accounts do
   end
 
   def remove_user_from_unit(%Unit{} = unit, %User{} = user) do
-    (from a in UserUnit,
-          where: a.user_id == ^user.id and a.unit_id == ^unit.id)
+    from(a in UserUnit,
+      where: a.user_id == ^user.id and a.unit_id == ^unit.id
+    )
     |> Repo.delete_all()
   end
 
