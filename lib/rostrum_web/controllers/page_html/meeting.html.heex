@@ -27,20 +27,16 @@
   </div>
 </div>
 
-<%= if @business do %>
-<h3>Business</h3>
-<div class="business">
-<.render_markdown source={@business} />
-<div class="business-help">
-  This box is only visible to logged-in members of this unit. The congregation will not be able to see this.
+<div :if={@show_private} class="prompt-text">
+  <p>
+    You are viewing this meeting as a logged-in user with editor or owner privileges. Grey boxes like this will only be visible to owner and editors of this unit's meetings.
+  </p>
 </div>
-</div>
-<% end %>
 
 <h3>Program</h3>
 
 <div :for={event <- @meeting.events["events"] || []}>
-  <.render_event event={event} />
+  <.render_event event={event} show_private={@show_private} />
 </div>
 
 <%= if length(@announcements || []) > 0 do %>

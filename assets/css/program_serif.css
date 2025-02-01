@@ -141,8 +141,9 @@ italic {
 }
 
 .business {
+    margin-top: 1rem;
     font-size: 0.9rem;
-    padding: 1rem;
+    padding: 0.5rem;
     background-color: var(--body-background-inset);
     border-radius: 0.5rem;
 }

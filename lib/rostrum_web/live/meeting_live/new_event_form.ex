@@ -47,6 +47,7 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
               {"Ward Business", "ward-business"},
               {"Stake Business", "stake-business"},
               {"Ward & Stake Business", "ward-stake-business"},
+              {"Prompt", "prompt"},
               {"Custom", "custom"}
             ]
           ]}
@@ -73,6 +74,12 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
         <% end %>
         <%= if @form[:type].value in ["custom"] do %>
           <.input field={@form[:name]} type="text" label="Event title" />
+        <% end %>
+        <%= if @form[:type].value in ["ward-business", "stake-business", "ward-stake-business", "prompt"] do %>
+        <.input field={@form[:private_notes]}
+          type="textarea"
+          label="Private notes"
+          help="This will only be visible to meeting editors and owners. Markdown supported." />
         <% end %>
 
         <:actions>

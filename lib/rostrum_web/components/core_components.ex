@@ -612,6 +612,7 @@ defmodule RostrumWeb.CoreComponents do
   end
 
   attr :event, :any, required: true
+  attr :show_private, :boolean, default: false
 
   def render_event(assigns) do
     type_to_name = %{
@@ -631,6 +632,7 @@ defmodule RostrumWeb.CoreComponents do
       "ward-business" => "Ward Business",
       "stake-business" => "Stake Business",
       "ward-stake-business" => "Ward & Stake Business",
+      "prompt" => "",
       "custom" => "Custom"
     }
 
@@ -688,8 +690,24 @@ defmodule RostrumWeb.CoreComponents do
         {@event["Performer"]}
       <% end %>
 
-      <%= if @event["type"] in ["sacrament", "baby-blessing", "announcements", "testimonies", "ward-business", "stake-business", "ward-stake-business"] do %>
+      <%= if @event["type"] in ["sacrament", "baby-blessing", "announcements", "testimonies"] do %>
         <h4>{@name}</h4>
+      <% end %>
+
+      <%= if @event["type"] in ["ward-business", "stake-business", "ward-stake-business"] do %>
+        <h4>{@name}</h4>
+        <%= if @show_private && @event["private_notes"] do %>
+          <div class="prompt-text">
+          <.render_markdown source={@event["private_notes"]} />
+          </div>
+        <% end %>
+      <% end %>
+
+      <%= if @show_private && @event["type"] in ["prompt"] do %>
+      <div class="prompt-text">
+        <h6>Prompt</h6>
+        <.render_markdown source={@event["private_notes"]} />
+      </div>
       <% end %>
 
       <%= if @event["type"] in ["custom"] do %>

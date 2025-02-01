@@ -3,7 +3,7 @@ defmodule Rostrum.Meetings.Event do
 
   @derive JSON.Encoder
   @derive Jason.Encoder
-  defstruct [:id, :type, :term, :number, :name, :verses, :performer]
+  defstruct [:id, :type, :term, :number, :name, :verses, :performer, :private_notes]
 
   @field_types %{
      id: :string,
@@ -12,7 +12,8 @@ defmodule Rostrum.Meetings.Event do
      number: :integer,
      name: :string,
      verses: :string,
-     performer: :string
+     performer: :string,
+     private_notes: :string
    }
   @allowed_types [
      "opening-hymn",
@@ -31,6 +32,7 @@ defmodule Rostrum.Meetings.Event do
      "ward-business",
      "stake-business",
      "ward-stake-business",
+     "prompt",
      "custom"
    ]
 
@@ -47,6 +49,8 @@ defmodule Rostrum.Meetings.Event do
   end
 
   def hymn_name(nil), do: ""
+
+  def hymn_name(""), do: ""
 
   def hymn_name(number) when not is_integer(number) do
     case Integer.parse(number) do

@@ -55,7 +55,7 @@ defmodule RostrumWeb.MeetingLive.Show do
             phx-click={JS.push_focus()}>+</.link>
         </div>
       </:col>
-      <:col :let={event}><.render_event event={event} /></:col>
+      <:col :let={event}><.render_event event={event} show_private={true} /></:col>
       <:action :let={event}>
         <.link
           class="p-3 rounded-lg text-red-800 bg-zinc-50 hover:bg-red-100 border-red-700 border-2"

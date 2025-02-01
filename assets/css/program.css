@@ -71,6 +71,7 @@ h3 {
 /* "Administration of the Sacrament" etc. */
 h4 {
     font-weight: 400;
+    /* color: var(--body-accent-font-color); */
     font-size: 1rem;
     text-transform: lowercase;
     font-variant-caps: small-caps;
@@ -139,9 +140,27 @@ italic {
     margin: 1em 0;
 }
 
-.business {
+.prompt-text h6 {
+    font-weight: 400;
+    font-size: 0.7rem;
+    text-transform: lowercase;
+    font-variant-caps: small-caps;
+    margin: 0;
+}
+
+.prompt-text {
+    margin: 0.8rem 0;
+    padding: 0.5rem;
+    padding-bottom: 0.1rem;
+    background-color: var(--body-background-inset);
+    border-radius: 0.5rem;
     font-size: 0.9rem;
-    padding: 1rem;
+}
+
+.business {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    padding: 0.5rem;
     background-color: var(--body-background-inset);
     border-radius: 0.5rem;
 }

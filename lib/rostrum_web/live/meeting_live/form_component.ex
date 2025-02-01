@@ -26,17 +26,6 @@ defmodule RostrumWeb.MeetingLive.FormComponent do
         <.input field={@form[:presiding]} type="text" label="Presiding" />
         <.input field={@form[:conducting]} type="text" label="Conducting" />
         <.input field={@form[:chorister]} type="text" label="Chorister" />
-        <.input field={@form[:business]} type="textarea" label="Business"
-          placeholder="e.g.
-Release
-- Brother Bennet as teacher
-- Mary Bennet as organist
-- etc.
-
-Call
-- Brother Fitzwilliam as greeter
-- etc."
-          help="This information will only be visible to logged-in users. Markdown supported." />
         <.input
           field={@form[:accompanist_term]}
           type="select"
