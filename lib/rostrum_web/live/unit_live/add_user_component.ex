@@ -40,7 +40,7 @@ defmodule RostrumWeb.UnitLive.AddUserComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:email]} type="email" label="Email" autocomplete="off" />
+        <.input field={@form[:email]} type="email" label="Email" autocomplete="off" data-1p-ignore data-lpignore="true" data-protonpass-ignore="true" />
         <:actions>
           <.button phx-disable-with="Saving...">Add to unit</.button>
         </:actions>

@@ -50,20 +50,28 @@ defmodule RostrumWeb.UnitLive.ModifyUserComponent do
   def handle_event("save", %{"role" => params}, socket) do
     dbg(params)
     role = params["role"]
-    if nil do
-      # notify_parent({:new_email, email})
+    unit = socket.assigns.unit
+    user = socket.assigns.current_user
+    target_user = socket.assigns.modifying_user
 
-      {:noreply,
-       socket
-       |> put_flash(:info, "User added to unit successfully")
-       |> push_patch(to: socket.assigns.patch)}
-    else
-      {:noreply,
-       socket
-       |> put_flash(:error, "Unable to grant user role")
-       |> push_patch(to: socket.assigns.patch)}
-    end
+    {kind, msg} =
+      case Accounts.set_authorization_level(target_user, unit, role, user) do
+        :ok ->
+          {:info, "User permissions updated to #{role}"}
+
+        {:error, :user_not_in_unit} ->
+          {:error, "Target user is not associated with this unit"}
+
+        {:error, :insufficient_permissions} ->
+          {:error, "You do not have permission to elevate a user to role #{role}"}
+
+        {:error, :illegal_authorization_level} ->
+          {:error, "Not a valid role"}
+      end
+
+    {:noreply,
+     socket
+     |> put_flash(kind, msg)
+     |> push_patch(to: socket.assigns.patch)}
   end
-
-  defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
 end

@@ -81,6 +81,8 @@ defmodule RostrumWeb.Router do
     pipe_through [:browser]
 
     delete "/users/log_out", UserSessionController, :delete
+    # get so that we can redirect here
+    get "/users/log_out", UserSessionController, :delete
 
     live_session :current_user,
       on_mount: [{RostrumWeb.UserAuth, :mount_current_user}] do

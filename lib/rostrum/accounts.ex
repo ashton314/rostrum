@@ -353,6 +353,10 @@ defmodule Rostrum.Accounts do
     end
   end
 
+  def delete_user(%User{} = user) do
+    Repo.delete(user)
+  end
+
   alias Rostrum.Accounts.Unit
 
   @doc """
@@ -474,11 +478,7 @@ defmodule Rostrum.Accounts do
   access to the unit. This is a "safer" version of
   `set_authorization_level!`, which does no checks.
   """
-  @spec(
-    set_authorization_level(User.t(), Unit.t(), String.t() | :music | :editor | :owner, User.t()) ::
-      :ok,
-    {:error, atom()}
-  )
+  @spec set_authorization_level(User.t(), Unit.t(), String.t() | :music | :editor | :owner, User.t()) :: :ok | {:error, atom()}
   def set_authorization_level(%User{} = user, %Unit{} = unit, level, %User{} = setter) do
     level =
       if is_atom(level) do
@@ -493,7 +493,7 @@ defmodule Rostrum.Accounts do
       end
 
     if Enum.member?([:owner, :editor, :music], level) do
-      if authorized?(setter, unit, :owner) do
+      if authorized?(setter, unit, level) do
         if can_see_unit?(user, unit.id) do
           set_authorization_level!(user, unit, level)
           :ok

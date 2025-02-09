@@ -70,6 +70,17 @@ defmodule RostrumWeb.UserSettingsLive do
         </.simple_form>
       </div>
     </div>
+
+    <hr class="my-6" />
+
+    <div class="space-y-12 divide-y">
+      <.link
+        phx-click={JS.push("delete")}
+        class="px-3 py-2 leading-6 font-semibold rounded-lg text-red-800 bg-zinc-50 hover:bg-red-100 border-red-700 border-2"
+        data-confirm="Are you sure? This cannot be undone.">
+      <button>Delete account</button>
+      </.link>
+    </div>
     """
   end
 
@@ -163,5 +174,13 @@ defmodule RostrumWeb.UserSettingsLive do
       {:error, changeset} ->
         {:noreply, assign(socket, password_form: to_form(changeset))}
     end
+  end
+
+  def handle_event("delete", _params, socket) do
+    user = socket.assigns.current_user
+
+    Accounts.delete_user(user)
+    # redirect here to clear the session
+    {:noreply, push_navigate(socket, to: ~p"/users/log_out")}
   end
 end
