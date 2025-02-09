@@ -60,4 +60,62 @@ defmodule Rostrum.MeetingsTest do
       assert %Ecto.Changeset{} = Meetings.change_meeting(meeting)
     end
   end
+
+  describe "templates" do
+    alias Rostrum.Meetings.Template
+
+    import Rostrum.MeetingsFixtures
+
+    @invalid_attrs %{events: nil, title: nil, welcome_blurb: nil}
+
+    test "list_templates/0 returns all templates" do
+      template = template_fixture()
+      assert Meetings.list_templates() == [template]
+    end
+
+    test "get_template!/1 returns the template with given id" do
+      template = template_fixture()
+      assert Meetings.get_template!(template.id) == template
+    end
+
+    test "create_template/1 with valid data creates a template" do
+      valid_attrs = %{events: %{}, title: "some title", welcome_blurb: "some welcome_blurb"}
+
+      assert {:ok, %Template{} = template} = Meetings.create_template(valid_attrs)
+      assert template.events == %{}
+      assert template.title == "some title"
+      assert template.welcome_blurb == "some welcome_blurb"
+    end
+
+    test "create_template/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Meetings.create_template(@invalid_attrs)
+    end
+
+    test "update_template/2 with valid data updates the template" do
+      template = template_fixture()
+      update_attrs = %{events: %{}, title: "some updated title", welcome_blurb: "some updated welcome_blurb"}
+
+      assert {:ok, %Template{} = template} = Meetings.update_template(template, update_attrs)
+      assert template.events == %{}
+      assert template.title == "some updated title"
+      assert template.welcome_blurb == "some updated welcome_blurb"
+    end
+
+    test "update_template/2 with invalid data returns error changeset" do
+      template = template_fixture()
+      assert {:error, %Ecto.Changeset{}} = Meetings.update_template(template, @invalid_attrs)
+      assert template == Meetings.get_template!(template.id)
+    end
+
+    test "delete_template/1 deletes the template" do
+      template = template_fixture()
+      assert {:ok, %Template{}} = Meetings.delete_template(template)
+      assert_raise Ecto.NoResultsError, fn -> Meetings.get_template!(template.id) end
+    end
+
+    test "change_template/1 returns a template changeset" do
+      template = template_fixture()
+      assert %Ecto.Changeset{} = Meetings.change_template(template)
+    end
+  end
 end

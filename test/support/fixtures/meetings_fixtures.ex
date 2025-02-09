@@ -19,4 +19,20 @@ defmodule Rostrum.MeetingsFixtures do
 
     meeting
   end
+
+  @doc """
+  Generate a template.
+  """
+  def template_fixture(attrs \\ %{}) do
+    {:ok, template} =
+      attrs
+      |> Enum.into(%{
+        events: %{},
+        title: "some title",
+        welcome_blurb: "some welcome_blurb"
+      })
+      |> Rostrum.Meetings.create_template()
+
+    template
+  end
 end
