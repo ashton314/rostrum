@@ -24,12 +24,14 @@
 
 <.table
   id="users"
-  rows={@streams.users}>
-  <:col :let={{_id, user}} label="Email">{user.email}</:col>
-  <:action :let={{id, user}}>
+  rows={@users}
+  row_click={fn user -> JS.navigate(~p"/units/#{@unit}/permissions/#{user.id}") end} >
+  <:col :let={user} label="Email">{user.email}</:col>
+  <:col :let={user} label="Role">{user.role}</:col>
+  <:action :let={user}>
     <.button
       class="text-red-800 bg-red-50 hover:bg-red-100 border-red-700 border-2"
-      phx-click={JS.push("boot_user", value: %{user: user.id}) |> hide("##{id}")}
+      phx-click={JS.push("boot_user", value: %{user: user.id}) |> hide("##{user.id}")}
       data-confirm="Really remove user from unit? If you are removing yourself you will loose access to this unit completely.">
       Remove from unit
     </.button>
@@ -56,6 +58,19 @@
     action={@live_action}
     unit={@unit}
     current_user={@current_user}
+    patch={~p"/units/#{@unit}"}
+  />
+</.modal>
+
+<.modal :if={@live_action == :modify_user} id="modify-user-modal" show on_cancel={JS.patch(~p"/units/#{@unit}")}>
+  <.live_component
+    module={RostrumWeb.UnitLive.ModifyUserComponent}
+    id={@unit.id}
+    title={@page_title}
+    action={@live_action}
+    unit={@unit}
+    current_user={@current_user}
+    modifying_user={@modifying_user}
     patch={~p"/units/#{@unit}"}
   />
 </.modal>
