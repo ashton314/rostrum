@@ -246,7 +246,7 @@ defmodule RostrumWeb.UserAuth do
       if is_list(user.units) && length(user.units) > 0 do
         conn
         |> assign(:current_user, user)
-        |> assign(:current_unit, user.units |> Enum.at(0))
+        |> assign(:current_unit, Accounts.get_active_unit!(user))
       else
         conn
         |> put_flash(:error, "You must be associated with a unit before proceeding.")

@@ -2,6 +2,7 @@ defmodule RostrumWeb.MeetingLive.Show do
   use RostrumWeb, :live_view
 
   alias Rostrum.Meetings
+  alias Rostrum.Accounts
 
   @impl true
   def mount(_params, _session, socket) do
@@ -18,7 +19,7 @@ defmodule RostrumWeb.MeetingLive.Show do
      |> apply_action(socket.assigns.live_action, params)}
   end
 
-  def events_editor(assigns) do
+  def edit_all(assigns) do
     es = Map.get(assigns.meeting, :events, %{"events" => []}) || %{"events" => []}
 
     assigns =
@@ -70,6 +71,23 @@ defmodule RostrumWeb.MeetingLive.Show do
       <.button class="mt-8">+ Event</.button>
     </.link>
     """
+  end
+
+  def edit_music(assigns) do
+    ~H"""
+    Music modification goes here
+    """
+  end
+
+  def events_editor(assigns) do
+    unit = assigns.current_unit
+    user = assigns.current_user
+
+    if Accounts.authorized?(user, unit, :editor) do
+      edit_all(assigns)
+    else
+      edit_music(assigns)
+    end
   end
 
   @impl true

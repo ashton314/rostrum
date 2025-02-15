@@ -6,11 +6,14 @@
     <.format_date date={@meeting.date} />
   </:subtitle>
   <:actions>
-    <.link patch={~p"/meetings/#{@meeting}/show/edit"} phx-click={JS.push_focus()}>
+    <.link
+      :if={Rostrum.Accounts.authorized?(@current_user, @current_unit, :editor)}
+      patch={~p"/meetings/#{@meeting}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit</.button>
     </.link>
 
     <.link
+      :if={Rostrum.Accounts.authorized?(@current_user, @current_unit, :editor)}
       class="px-3 py-2 leading-6 font-semibold rounded-lg text-red-800 bg-zinc-50 hover:bg-red-100 border-red-700 border-2"
       phx-click={JS.push("delete")} data-confirm="Delete this meeting?">
       <button>Delete</button>
@@ -27,7 +30,7 @@
   <:item title="Topic">{@meeting.topic}</:item>
 </.list>
 
-<.events_editor meeting={@meeting} />
+<.events_editor meeting={@meeting} current_user={@current_user} current_unit={@current_unit} />
 
 <.modal :if={@live_action == :edit} id="meeting-modal" show on_cancel={JS.patch(~p"/meetings/#{@meeting}")}>
   <.live_component
