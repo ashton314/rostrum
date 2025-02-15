@@ -74,8 +74,29 @@ defmodule RostrumWeb.MeetingLive.Show do
   end
 
   def edit_music(assigns) do
+    es = Map.get(assigns.meeting,
+                 :events,
+                 %{"events" => []}) || %{"events" => []}
+    es =
+      (es["events"] || [])
+      |> Enum.filter(fn x -> x["type"] in ["opening-hymn", "closing-hymn", "sacrament-hymn", "rest-hymn", "hymn", "musical-number"] end)
+# es["events"] || [])
+
+    assigns =
+      assigns
+      |> assign(:es, es)
+
+    meeting = assigns.meeting
+
     ~H"""
-    Music modification goes here
+    <.table
+      id="events"
+      rows={@es}
+      row_click={fn e -> JS.navigate(~p|/meetings/#{meeting}/show/event/#{e["id"]}|) end}
+    >
+      <:col></:col>
+      <:col :let={event}><.render_event event={event} show_private={false} /></:col>
+    </.table>
     """
   end
 

@@ -261,6 +261,20 @@ defmodule RostrumWeb.UserAuth do
     end
   end
 
+  def require_role(conn, opts) do
+    role = Keyword.get(opts, :role, :editor)
+    redirect_fail = Keyword.get(opts, :redirect, ~p"/dash")
+
+    if Accounts.authorized?(conn.assigns.current_user, conn.assigns.current_unit, role) do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You are not authorized to view that resource on this unit")
+      |> redirect(to: redirect_fail)
+      |> halt()
+    end
+  end
+
   defp put_token_in_session(conn, token) do
     conn
     |> put_session(:user_token, token)

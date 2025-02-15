@@ -7,9 +7,16 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
   @impl true
   def render(assigns) do
     dat = Meetings.Event.hymn_name(assigns.form[:number].value)
+
     assigns =
       assigns
-      |> assign(:hymn_name, (if is_map(dat), do: dat.name, else: "Invalid"))
+      |> assign(
+        :hymn_name,
+        if(is_map(dat),
+          do: dat.name,
+          else: if(assigns.form[:number].value == nil, do: "", else: "Invalid")
+        )
+      )
 
     ~H"""
     <div>
@@ -76,10 +83,12 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
           <.input field={@form[:name]} type="text" label="Event title" />
         <% end %>
         <%= if @form[:type].value in ["ward-business", "stake-business", "ward-stake-business", "prompt"] do %>
-        <.input field={@form[:private_notes]}
-          type="textarea"
-          label="Private notes"
-          help="This will only be visible to meeting editors and owners. Markdown supported." />
+          <.input
+            field={@form[:private_notes]}
+            type="textarea"
+            label="Private notes"
+            help="This will only be visible to meeting editors and owners. Markdown supported."
+          />
         <% end %>
 
         <:actions>
