@@ -17,26 +17,10 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
           else: if(assigns.form[:number].value == nil, do: "", else: "Invalid")
         )
       )
-
-    ~H"""
-    <div>
-      <.header>
-        {@title}
-      </.header>
-
-      <.simple_form
-        for={@form}
-        id="event-form"
-        phx-target={@myself}
-        phx-change="validate"
-        phx-submit="save"
-      >
-        <.input
-          field={@form[:type]}
-          type="select"
-          label="Type"
-          value={@form[:type].value}
-          options={[
+      |> assign(
+        :type_options,
+        (if assigns.show_all_types,
+           do: [
             Music: [
               {"Opening Hymn", "opening-hymn"},
               {"Closing Hymn", "closing-hymn"},
@@ -57,7 +41,38 @@ defmodule RostrumWeb.MeetingLive.NewEventForm do
               {"Prompt", "prompt"},
               {"Custom", "custom"}
             ]
-          ]}
+          ],
+           else: [
+            Music: [
+              {"Opening Hymn", "opening-hymn"},
+              {"Closing Hymn", "closing-hymn"},
+              {"Sacrament Hymn", "sacrament-hymn"},
+              {"Rest Hymn", "rest-hymn"},
+              {"Hymn", "hymn"},
+              {"Musical number", "musical-number"}
+            ],
+          ])
+      )
+
+    ~H"""
+    <div>
+      <.header>
+        {@title}
+      </.header>
+
+      <.simple_form
+        for={@form}
+        id="event-form"
+        phx-target={@myself}
+        phx-change="validate"
+        phx-submit="save"
+      >
+        <.input
+          field={@form[:type]}
+          type="select"
+          label="Type"
+          value={@form[:type].value}
+          options={@type_options}
         />
         <%= if @form[:type].value in ["opening-hymn", "closing-hymn", "sacrament-hymn", "rest-hymn", "hymn"] do %>
           <.input field={@form[:number]} type="number" label="Hymn number" />

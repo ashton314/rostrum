@@ -52,6 +52,7 @@
     action={@live_action}
     meeting={@meeting}
     event={@event}
+    show_all_types={Rostrum.Accounts.authorized?(@current_user, @current_unit, :editor)}
     patch={~p"/meetings/#{@meeting}"}
   />
 </.modal>
@@ -64,6 +65,7 @@
     action={@live_action}
     meeting={@meeting}
     after_event_id={@after_event_id}
+    show_all_types={Rostrum.Accounts.authorized?(@current_user, @current_unit, :editor)}
     patch={~p"/meetings/#{@meeting}"}
   />
 </.modal>
