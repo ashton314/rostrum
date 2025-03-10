@@ -513,45 +513,66 @@ defmodule Rostrum.AccountsTest do
 
     @invalid_attrs %{name: nil}
 
-    test "list_units/0 returns all units" do
-      unit = unit_fixture()
-      assert Accounts.list_units() == [unit]
+    test "list_units/0 returns all units for an associated user" do
+      user1 = user_fixture()
+      user2 = user_fixture()
+      unit = unit_fixture(%{}, user1)
+      assert Accounts.list_units(user1) == [unit]
+      assert Accounts.list_units(user2) == []
     end
 
-    test "get_unit!/1 returns the unit with given id" do
-      unit = unit_fixture()
-      assert Accounts.get_unit!(unit.id) == unit
+    test "get_unit!/1 returns the unit with given id if user is allowed to see" do
+      user1 = user_fixture()
+      user2 = user_fixture()
+      unit = unit_fixture(%{}, user1)
+      assert Accounts.get_unit!(unit.id, user1) == unit
+      assert_raise Ecto.NoResultsError, fn -> Accounts.get_unit!(unit.id, user2) end
     end
 
     test "create_unit/1 with valid data creates a unit" do
-      valid_attrs = %{name: "some name"}
+      valid_attrs = %{name: "some name", slug: "some-name"}
 
       assert {:ok, %Unit{} = unit} = Accounts.create_unit(valid_attrs)
       assert unit.name == "some name"
+      assert unit.slug == "some-name"
     end
 
     test "create_unit/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Accounts.create_unit(@invalid_attrs)
     end
 
+    test "duplicate slugs not allowed" do
+      valid_attrs = %{name: "some name", slug: "some-name"}
+
+      assert {:ok, %Unit{}} = Accounts.create_unit(valid_attrs)
+      assert {:error, %Ecto.Changeset{errors: [slug: {"has already been taken", _}]}} = Accounts.create_unit(valid_attrs)
+    end
+
     test "update_unit/2 with valid data updates the unit" do
-      unit = unit_fixture()
+      user1 = user_fixture()
+      user2 = user_fixture()
+      unit = unit_fixture(%{}, user1)
       update_attrs = %{name: "some updated name"}
 
-      assert {:ok, %Unit{} = unit} = Accounts.update_unit(unit, update_attrs)
+      assert {:ok, %Unit{} = unit} = Accounts.update_unit(unit, user1, update_attrs)
+      assert_raise Ecto.NoResultsError, fn -> Accounts.update_unit(unit, user2, update_attrs) end
       assert unit.name == "some updated name"
     end
 
     test "update_unit/2 with invalid data returns error changeset" do
-      unit = unit_fixture()
-      assert {:error, %Ecto.Changeset{}} = Accounts.update_unit(unit, @invalid_attrs)
-      assert unit == Accounts.get_unit!(unit.id)
+      user1 = user_fixture()
+      unit = unit_fixture(%{}, user1)
+      assert {:error, %Ecto.Changeset{}} = Accounts.update_unit(unit, user1, @invalid_attrs)
+      assert unit == Accounts.get_unit!(unit.id, user1)
     end
 
     test "delete_unit/1 deletes the unit" do
-      unit = unit_fixture()
-      assert {:ok, %Unit{}} = Accounts.delete_unit(unit)
-      assert_raise Ecto.NoResultsError, fn -> Accounts.get_unit!(unit.id) end
+      user1 = user_fixture()
+      user2 = user_fixture()
+      unit = unit_fixture(%{}, user1)
+      assert_raise Ecto.NoResultsError, fn -> Accounts.delete_unit(unit, user2) end
+      assert {:ok, %Unit{}} = Accounts.delete_unit(unit, user1)
+      assert_raise Ecto.NoResultsError, fn -> Accounts.get_unit!(unit.id, user1) end
     end
 
     test "change_unit/1 returns a unit changeset" do

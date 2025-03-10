@@ -32,13 +32,18 @@ defmodule Rostrum.AccountsFixtures do
   @doc """
   Generate a unit.
   """
-  def unit_fixture(attrs \\ %{}) do
+  def unit_fixture(attrs \\ %{}, user \\ nil) do
     {:ok, unit} =
       attrs
       |> Enum.into(%{
-        name: "some name"
+        name: "some name",
+        slug: "some-name"
       })
       |> Rostrum.Accounts.create_unit()
+
+    if user do
+      Rostrum.Accounts.add_user_to_unit(user.id, unit.id)
+    end
 
     unit
   end

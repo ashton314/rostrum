@@ -1,4 +1,4 @@
-defmodule Rostrum.AccountsTest do
+defmodule Rostrum.DateUtilsTest do
   use ExUnit.Case
   alias Rostrum.DateUtils
 

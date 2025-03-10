@@ -433,7 +433,7 @@ defmodule Rostrum.Accounts do
     if can_see_unit?(user, unit_id) do
       :ok
     else
-      raise Ecto.NoResultsError
+      raise Ecto.NoResultsError, queryable: Unit
     end
   end
 
