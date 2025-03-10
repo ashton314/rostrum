@@ -632,7 +632,7 @@ defmodule Rostrum.Accounts do
     case {past, active, future} do
       {_, %Meeting{} = a, _} -> a
       {_, nil, [a | _]} -> a
-      {as, nil, []} -> List.last(as)
+      {[a | _], nil, []} -> a
     end
   end
 

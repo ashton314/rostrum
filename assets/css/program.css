@@ -249,8 +249,12 @@ italic {
     color: var(--body-accent-font-color);
 }
 
+.musical-number-performer {
+}
+
 .musical-number-name {
     font-style: italic;
+    display: block;
 }
 
 .announcement {

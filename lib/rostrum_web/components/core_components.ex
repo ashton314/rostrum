@@ -686,8 +686,11 @@ defmodule RostrumWeb.CoreComponents do
       <% end %>
 
       <%= if @event["type"] in ["musical-number"] do %>
-        {@event["name"]}
-        {@event["Performer"]}
+      <div class="hymn">
+        <h5>{@event["term"] || @name}</h5>
+        <span class="musical-number-name">{@event["name"]}</span>
+        <span class="musical-number-performer">{@event["performer"]}</span>
+      </div>
       <% end %>
 
       <%= if @event["type"] in ["sacrament", "baby-blessing", "announcements", "testimonies"] do %>
