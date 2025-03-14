@@ -47,4 +47,10 @@ defmodule Rostrum.AccountsFixtures do
 
     unit
   end
+
+  def user_unit_fixture(user_attrs \\ %{}, unit_attrs \\ %{}) do
+    user = user_fixture(user_attrs)
+    unit = unit_fixture(unit_attrs, user)
+    {user, unit}
+  end
 end

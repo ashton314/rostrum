@@ -3,25 +3,36 @@ defmodule Rostrum.MeetingsTest do
 
   alias Rostrum.Meetings
 
+  def unnilify(%Meetings.Meeting{} = m) do
+    for k <- Map.keys(m) do
+      {k, (if Map.get(m, k) == nil, do: "", else: Map.get(m, k))}
+    end
+    |> Enum.into(%{})
+  end
+
   describe "meetings" do
     alias Rostrum.Meetings.Meeting
 
     import Rostrum.MeetingsFixtures
+    import Rostrum.AccountsFixtures
 
     @invalid_attrs %{date: nil, events: nil, metadata: nil}
 
     test "list_meetings/0 returns all meetings" do
-      meeting = meeting_fixture()
-      assert Meetings.list_meetings() == [meeting]
+      {_user, unit} = user_unit_fixture()
+      meeting = meeting_fixture(unit)
+      assert Meetings.list_meetings(unit) == [unnilify(meeting)]
     end
 
     test "get_meeting!/1 returns the meeting with given id" do
-      meeting = meeting_fixture()
-      assert Meetings.get_meeting!(meeting.id) == meeting
+      {_user, unit} = user_unit_fixture()
+      meeting = meeting_fixture(unit)
+      assert Meetings.get_meeting!(meeting.id, unit) == unnilify(meeting)
     end
 
     test "create_meeting/1 with valid data creates a meeting" do
-      valid_attrs = %{date: ~D[2024-12-21], events: %{}, metadata: %{}}
+      {_user, unit} = user_unit_fixture()
+      valid_attrs = %{date: ~D[2024-12-21], events: %{}, metadata: %{}, unit_id: unit.id}
 
       assert {:ok, %Meeting{} = meeting} = Meetings.create_meeting(valid_attrs)
       assert meeting.date == ~D[2024-12-21]
@@ -34,7 +45,8 @@ defmodule Rostrum.MeetingsTest do
     end
 
     test "update_meeting/2 with valid data updates the meeting" do
-      meeting = meeting_fixture()
+      {_user, unit} = user_unit_fixture()
+      meeting = meeting_fixture(unit)
       update_attrs = %{date: ~D[2024-12-22], events: %{}, metadata: %{}}
 
       assert {:ok, %Meeting{} = meeting} = Meetings.update_meeting(meeting, update_attrs)
@@ -44,19 +56,22 @@ defmodule Rostrum.MeetingsTest do
     end
 
     test "update_meeting/2 with invalid data returns error changeset" do
-      meeting = meeting_fixture()
+      {_user, unit} = user_unit_fixture()
+      meeting = meeting_fixture(unit)
       assert {:error, %Ecto.Changeset{}} = Meetings.update_meeting(meeting, @invalid_attrs)
-      assert meeting == Meetings.get_meeting!(meeting.id)
+      assert unnilify(meeting) == Meetings.get_meeting!(meeting.id, unit)
     end
 
     test "delete_meeting/1 deletes the meeting" do
-      meeting = meeting_fixture()
+      {_user, unit} = user_unit_fixture()
+      meeting = meeting_fixture(unit)
       assert {:ok, %Meeting{}} = Meetings.delete_meeting(meeting)
-      assert_raise Ecto.NoResultsError, fn -> Meetings.get_meeting!(meeting.id) end
+      assert_raise Ecto.NoResultsError, fn -> Meetings.get_meeting!(meeting.id, unit) end
     end
 
     test "change_meeting/1 returns a meeting changeset" do
-      meeting = meeting_fixture()
+      {_user, unit} = user_unit_fixture()
+      meeting = meeting_fixture(unit)
       assert %Ecto.Changeset{} = Meetings.change_meeting(meeting)
     end
   end
