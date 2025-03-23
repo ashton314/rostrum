@@ -32,9 +32,6 @@ body {
         padding: 0 1.3rem;
         padding-bottom: 2rem;
     }
-    h1 {
-        font-size: 1.4rem;
-    }
 }
 
 p {
@@ -50,19 +47,20 @@ h1 {
     font-weight: 300;
     margin-top: 1.5rem;
     margin-bottom: 0.3rem;
+    font-size: 1.95rem;
 }
 
 h2 {
     font-weight: 300;
     color: var(--body-accent-font-color);
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     margin-top: 0.3rem;
 }
 
 /* "Program", "Announcements", etc. */
 h3 {
     text-align: center;
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     font-weight: 300;
     margin-top: 2.5rem;
     margin-bottom: 1rem;
@@ -71,7 +69,7 @@ h3 {
 /* "Administration of the Sacrament" etc. */
 h4 {
     font-weight: 400;
-    /* color: var(--body-accent-font-color); */
+    color: var(--body-accent-font-color);
     font-size: 1rem;
     text-transform: lowercase;
     font-variant-caps: small-caps;
@@ -84,7 +82,8 @@ h5 {
     color: var(--body-accent-font-color);
     text-transform: lowercase;
     font-variant-caps: small-caps;
-    margin-top: 0.8rem;
+    font-size: 0.8rem;
+    margin-top: 1rem;
     margin-bottom: 0;
 }
 
@@ -265,6 +264,7 @@ italic {
     font-weight: 600;
     display: block;
     clear: both;
+    color: var(--body-accent-font-color);
 }
 
 .calendar-event {
@@ -300,6 +300,7 @@ italic {
 .calendar-event .event-title {
     font-weight: 600;
     display: block;
+    color: var(--body-accent-font-color);
 }
 
 /* Fancy hanging quotation marks */
