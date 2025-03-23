@@ -3,13 +3,15 @@ defmodule RostrumWeb.MeetingLiveTest do
 
   import Phoenix.LiveViewTest
   import Rostrum.MeetingsFixtures
+  import Rostrum.AccountsFixtures
 
   @create_attrs %{date: "2024-12-21", events: %{}, metadata: %{}}
   @update_attrs %{date: "2024-12-22", events: %{}, metadata: %{}}
   @invalid_attrs %{date: nil, events: nil, metadata: nil}
 
   defp create_meeting(_) do
-    meeting = meeting_fixture()
+    {_user, unit} = user_unit_fixture()
+    meeting = meeting_fixture(unit)
     %{meeting: meeting}
   end
 
