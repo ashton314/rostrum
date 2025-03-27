@@ -14,7 +14,7 @@ defmodule RostrumWeb.UnitLiveTest do
   end
 
   describe "Index" do
-    setup [:create_unit]
+    setup [:create_unit, :setup_login]
 
     test "lists all units", %{conn: conn, unit: unit} do
       {:ok, _index_live, html} = live(conn, ~p"/units")
@@ -78,7 +78,7 @@ defmodule RostrumWeb.UnitLiveTest do
   end
 
   describe "Show" do
-    setup [:create_unit]
+    setup [:create_unit, :setup_login]
 
     test "displays unit", %{conn: conn, unit: unit} do
       {:ok, _show_live, html} = live(conn, ~p"/units/#{unit}")

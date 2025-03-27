@@ -61,4 +61,23 @@ defmodule RostrumWeb.ConnCase do
     |> Phoenix.ConnTest.init_test_session(%{})
     |> Plug.Conn.put_session(:user_token, token)
   end
+
+  @doc """
+  Useful in a setup block to start with a logged-in user.
+  """
+  def setup_login(%{conn: conn, user: user, unit: _unit} = ctx) do
+    %{ctx | conn: log_in_user(conn, user)}
+  end
+
+  def setup_login(%{conn: _conn} = ctx) do
+    # no user; make one
+    register_and_log_in_user(ctx)
+    |> associate_with_fresh_unit()
+  end
+
+  def associate_with_fresh_unit(%{user: user} = ctx) do
+    unit = Rostrum.AccountsFixtures.unit_fixture(%{}, user)
+    Rostrum.Accounts.set_active_unit(user, unit.id)
+    ctx
+  end
 end

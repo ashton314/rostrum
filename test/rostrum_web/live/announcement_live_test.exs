@@ -9,12 +9,12 @@ defmodule RostrumWeb.AnnouncementLiveTest do
   @invalid_attrs %{description: nil, title: nil, start_display: nil, end_display: nil}
 
   defp create_announcement(_) do
-    announcement = announcement_fixture()
-    %{announcement: announcement}
+    {announcement, unit, user} = announcement_fixture()
+    %{announcement: announcement, user: user, unit: unit}
   end
 
   describe "Index" do
-    setup [:create_announcement]
+    setup [:create_announcement, :setup_login]
 
     test "lists all announcements", %{conn: conn, announcement: announcement} do
       {:ok, _index_live, html} = live(conn, ~p"/announcements")
@@ -78,7 +78,7 @@ defmodule RostrumWeb.AnnouncementLiveTest do
   end
 
   describe "Show" do
-    setup [:create_announcement]
+    setup [:create_announcement, :setup_login]
 
     test "displays announcement", %{conn: conn, announcement: announcement} do
       {:ok, _show_live, html} = live(conn, ~p"/announcements/#{announcement}")

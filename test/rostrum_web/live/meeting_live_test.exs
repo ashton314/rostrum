@@ -16,7 +16,7 @@ defmodule RostrumWeb.MeetingLiveTest do
   end
 
   describe "Index" do
-    setup [:create_meeting]
+    setup [:create_meeting, :setup_login]
 
     test "lists all meetings", %{conn: conn} do
       {:ok, _index_live, html} = live(conn, ~p"/meetings")
@@ -77,7 +77,7 @@ defmodule RostrumWeb.MeetingLiveTest do
   end
 
   describe "Show" do
-    setup [:create_meeting]
+    setup [:create_meeting, :setup_login]
 
     test "displays meeting", %{conn: conn, meeting: meeting} do
       {:ok, _show_live, html} = live(conn, ~p"/meetings/#{meeting}")

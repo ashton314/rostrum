@@ -82,7 +82,7 @@
 <div>
   <h2 class="text-lg font-semibold mt-11">Past meetings</h2>
   <.table
-    id="future_meetings"
+    id="past_meetings"
     class="mt-2"
     rows={@streams.past}
     row_click={fn {_id, meeting} -> JS.navigate(~p"/meetings/#{meeting}") end}

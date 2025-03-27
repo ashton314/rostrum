@@ -125,7 +125,7 @@ defmodule RostrumWeb.CalendarEventLive.FormComponent do
       end
 
     desc = calendar_event_params["time_description"]
-    dt = calendar_event_params["event_date"] |> dbg()
+    dt = calendar_event_params["event_date"]
 
     td_desc =
       if is_binary(desc) && desc != "" do
@@ -172,7 +172,6 @@ defmodule RostrumWeb.CalendarEventLive.FormComponent do
     unit = socket.assigns.current_unit
     calendar_event_params =
       calendar_event_params
-      |> dbg()
       |> Map.put("unit_id", unit.id)
       |> DateUtils.params_to_utc(["event_date"], unit.timezone)
 
