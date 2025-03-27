@@ -15,10 +15,10 @@ defmodule RostrumWeb.UserSessionControllerTest do
         })
 
       assert get_session(conn, :user_token)
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/dash"
 
       # Now do a logged in request and assert on the menu
-      conn = get(conn, ~p"/")
+      conn = get(conn, ~p"/dash")
       response = html_response(conn, 200)
       assert response =~ user.email
       assert response =~ ~p"/users/settings"
@@ -36,7 +36,7 @@ defmodule RostrumWeb.UserSessionControllerTest do
         })
 
       assert conn.resp_cookies["_rostrum_web_user_remember_me"]
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/dash"
     end
 
     test "logs the user in with return to", %{conn: conn, user: user} do
@@ -65,7 +65,7 @@ defmodule RostrumWeb.UserSessionControllerTest do
           }
         })
 
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/dash"
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Account created successfully"
     end
 

@@ -11,17 +11,18 @@ defmodule Rostrum.AnnouncementsTest do
     @invalid_attrs %{description: nil, title: nil, start_display: nil, end_display: nil}
 
     test "list_announcements/0 returns all announcements" do
-      announcement = announcement_fixture()
-      assert Announcements.list_announcements() == [announcement]
+      {announcement, unit, _user} = announcement_fixture()
+      assert Announcements.list_announcements(unit) == [announcement]
     end
 
     test "get_announcement!/1 returns the announcement with given id" do
-      announcement = announcement_fixture()
-      assert Announcements.get_announcement!(announcement.id) == announcement
+      {announcement, unit, _user} = announcement_fixture()
+      assert Announcements.get_announcement!(announcement.id, unit) == announcement
     end
 
     test "create_announcement/1 with valid data creates a announcement" do
-      valid_attrs = %{description: "some description", title: "some title", start_display: ~D[2024-12-21], end_display: ~D[2024-12-21]}
+      unit = Rostrum.AccountsFixtures.unit_fixture()
+      valid_attrs = %{description: "some description", unit_id: unit.id, title: "some title", start_display: ~D[2024-12-21], end_display: ~D[2024-12-21]}
 
       assert {:ok, %Announcement{} = announcement} = Announcements.create_announcement(valid_attrs)
       assert announcement.description == "some description"
@@ -35,7 +36,7 @@ defmodule Rostrum.AnnouncementsTest do
     end
 
     test "update_announcement/2 with valid data updates the announcement" do
-      announcement = announcement_fixture()
+      {announcement, _unit, _user} = announcement_fixture()
       update_attrs = %{description: "some updated description", title: "some updated title", start_display: ~D[2024-12-22], end_display: ~D[2024-12-22]}
 
       assert {:ok, %Announcement{} = announcement} = Announcements.update_announcement(announcement, update_attrs)
@@ -46,19 +47,19 @@ defmodule Rostrum.AnnouncementsTest do
     end
 
     test "update_announcement/2 with invalid data returns error changeset" do
-      announcement = announcement_fixture()
+      {announcement, unit, _user} = announcement_fixture()
       assert {:error, %Ecto.Changeset{}} = Announcements.update_announcement(announcement, @invalid_attrs)
-      assert announcement == Announcements.get_announcement!(announcement.id)
+      assert announcement == Announcements.get_announcement!(announcement.id, unit)
     end
 
     test "delete_announcement/1 deletes the announcement" do
-      announcement = announcement_fixture()
+      {announcement, unit, _user} = announcement_fixture()
       assert {:ok, %Announcement{}} = Announcements.delete_announcement(announcement)
-      assert_raise Ecto.NoResultsError, fn -> Announcements.get_announcement!(announcement.id) end
+      assert_raise Ecto.NoResultsError, fn -> Announcements.get_announcement!(announcement.id, unit) end
     end
 
     test "change_announcement/1 returns a announcement changeset" do
-      announcement = announcement_fixture()
+      {announcement, _unit, _user} = announcement_fixture()
       assert %Ecto.Changeset{} = Announcements.change_announcement(announcement)
     end
   end
