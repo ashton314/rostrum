@@ -37,6 +37,7 @@
       <a href="/dash" class="p-2 hover:bg-slate-50 rounded-lg">Dashboard</a>
       <a href="/meetings" class="p-2 hover:bg-slate-50 rounded-lg">Meetings</a>
       <%= if @current_user && @current_unit && Rostrum.Accounts.authorized?(@current_user, @current_unit, :editor) do %>
+        <a href="/templates" class="p-2 hover:bg-slate-50 rounded-lg">Templates</a>
         <a href="/announcements" class="p-2 hover:bg-slate-50 rounded-lg">Announcements</a>
         <a href="/calendar_events" class="p-2 hover:bg-slate-50 rounded-lg">Calendar Events</a>
       <% end %>
@@ -105,8 +106,11 @@
     <nav class="flex flex-col space-y-1 p-4">
       <a href="/dash" class="p-2 hover:bg-slate-50 rounded-lg">Dashboard</a>
       <a href="/meetings" class="p-2 hover:bg-slate-50 rounded-lg">Meetings</a>
+      <%= if @current_user && @current_unit && Rostrum.Accounts.authorized?(@current_user, @current_unit, :editor) do %>
+      <a href="/templates" class="p-2 hover:bg-slate-50 rounded-lg">Templates</a>
       <a href="/announcements" class="p-2 hover:bg-slate-50 rounded-lg">Announcements</a>
       <a href="/calendar_events" class="p-2 hover:bg-slate-50 rounded-lg">Calendar Events</a>
+      <% end %>
     </nav>
 
     <!-- Mobile User Links -->
