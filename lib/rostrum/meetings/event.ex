@@ -423,7 +423,25 @@ defmodule Rostrum.Meetings.Event do
       "1201" => %{name: "Hail the Day That Sees Him Rise", url: "https://www.churchofjesuschrist.org/study/music/hymns-for-home-and-church/hail-the-day-that-sees-him-rise", pdf: ""},
       "1202" => %{name: "He Is Born, the Divine Christ Child", url: "https://www.churchofjesuschrist.org/study/music/hymns-for-home-and-church/he-is-born-the-divine-christ-child", pdf: ""},
       "1203" => %{name: "What Child Is This?", url: "https://www.churchofjesuschrist.org/study/music/hymns-for-home-and-church/what-child-is-this", pdf: ""},
-      "1204" => %{name: "Star Bright", url: "https://www.churchofjesuschrist.org/study/music/hymns-for-home-and-church/star-bright", pdf: ""}
+      "1204" => %{name: "Star Bright", url: "https://www.churchofjesuschrist.org/study/music/hymns-for-home-and-church/star-bright", pdf: ""},
+
+      # batch 3
+      "1019" => %{name: "To Love like Thee", url: "https://www.churchofjesuschrist.org/media/music/songs/to-love-like-thee-release-3", pdf: ""},
+      "1020" => %{name: "Softly and Tenderly Jesus Is Calling", url: "https://www.churchofjesuschrist.org/media/music/songs/softly-and-tenderly-jesus-is-calling-release-3", pdf: ""},
+      "1021" => %{name: "I Know That My Savior Loves Me", url: "https://www.churchofjesuschrist.org/media/music/songs/i-know-that-my-savior-loves-me-release-3", pdf: ""},
+      "1022" => %{name: "Faith in Every Footstep", url: "https://www.churchofjesuschrist.org/media/music/songs/faith-in-every-footstep-release-3", pdf: ""},
+      "1023" => %{name: "Standing on the Promises", url: "https://www.churchofjesuschrist.org/media/music/songs/standing-on-the-promises-release-3", pdf: ""},
+      "1024" => %{name: "I Have Faith in the Lord Jesus Christ", url: "https://www.churchofjesuschrist.org/media/music/songs/i-have-faith-in-the-lord-jesus-christ-release-3", pdf: ""},
+      "1025" => %{name: "Take My Heart and Let It Be Consecrated", url: "https://www.churchofjesuschrist.org/media/music/songs/take-my-heart-and-let-it-be-consecrated-release-3", pdf: ""},
+      "1026" => %{name: "Holy Places", url: "https://www.churchofjesuschrist.org/media/music/songs/holy-places-release-3", pdf: ""},
+      "1027" => %{name: "Welcome Home", url: "https://www.churchofjesuschrist.org/media/music/songs/welcome-home-release-3", pdf: ""},
+      "1028" => %{name: "This Little Light of Mine", url: "https://www.churchofjesuschrist.org/media/music/songs/this-little-light-of-mine-release-3", pdf: ""},
+      "1029" => %{name: "I Can’t Count Them All", url: "https://www.churchofjesuschrist.org/media/music/songs/i-cant-count-them-all-release-3", pdf: ""},
+      "1030" => %{name: "Close as a Quiet Prayer", url: "https://www.churchofjesuschrist.org/media/music/songs/close-as-a-quiet-prayer-release-3", pdf: ""},
+      "1031" => %{name: "Come, Hear the Word the Lord Has Spoken", url: "https://www.churchofjesuschrist.org/media/music/songs/come-hear-the-word-the-lord-has-spoken-release-3", pdf: ""},
+
+      "1205" => %{name: "Let Easter Anthems Ring", url: "https://www.churchofjesuschrist.org/media/music/songs/let-easter-anthems-ring-release-3", pdf: ""},
+      "1206" => %{name: "Were You There?", url: "https://www.churchofjesuschrist.org/media/music/songs/were-you-there-release-3", pdf: ""}
     }
 
     Map.get(hymns, to_string(number), "Invalid")
