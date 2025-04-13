@@ -17,7 +17,7 @@ defmodule RostrumWeb.UnitLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Unit")
-    |> assign(:unit, Accounts.get_unit!(id, socket.asigns.current_user))
+    |> assign(:unit, Accounts.get_unit!(id, socket.assigns.current_user))
   end
 
   defp apply_action(socket, :new, _params) do

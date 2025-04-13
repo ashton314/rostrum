@@ -624,6 +624,9 @@ defmodule Rostrum.Accounts do
       where: a.user_id == ^user.id and a.unit_id == ^unit.id
     )
     |> Repo.delete_all()
+
+    User.active_unit_changeset(user, %{active_unit_id: nil})
+    |> Repo.update!()
   end
 
   def get_active_meeting(%Unit{} = unit) do

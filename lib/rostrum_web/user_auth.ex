@@ -95,7 +95,14 @@ defmodule RostrumWeb.UserAuth do
     {user_token, conn} = ensure_user_token(conn)
     user = user_token && Accounts.get_user_by_session_token(user_token)
     user = user && Accounts.load_units(user)
-    current_unit = user && Accounts.get_active_unit!(user)
+
+    current_unit =
+      try do
+        user && Accounts.get_active_unit!(user)
+      rescue
+        Ecto.NoResultsError -> nil
+      end
+
     conn
     |> assign(:current_user, user)
     |> assign(:current_unit, current_unit)

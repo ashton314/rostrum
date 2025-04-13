@@ -38,11 +38,19 @@ defmodule RostrumWeb.UnitLive.Show do
   def handle_event("boot_user", %{"user" => user_id}, socket) do
     user = Accounts.get_user!(user_id)
     unit = socket.assigns.unit
+
     Accounts.remove_user_from_unit(unit, user)
-    {:noreply,
-     socket
-     |> assign(:users, get_users(unit))
-     |> put_flash(:info, "User removed successfully")}
+    if user_id == socket.assigns.current_user.id do
+      {:noreply,
+       socket
+       |> redirect(to: ~p"/units/")
+       |> put_flash(:info, "You removed yourself from #{unit.name}")}
+    else
+      {:noreply,
+       socket
+       |> assign(:users, get_users(unit))
+       |> put_flash(:info, "User removed successfully")}
+    end
   end
 
   @impl true
