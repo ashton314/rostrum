@@ -385,7 +385,8 @@ defmodule Rostrum.Accounts do
   end
 
   def get_active_unit!(%User{} = user) do
-    if user.active_unit_id do
+    # the "can_see_unit?" bit is in case we're logged in and we get booted from a unit
+    if user.active_unit_id && can_see_unit?(user, user.active_unit_id) do
       get_unit!(user.active_unit_id, user)
     else
       user
