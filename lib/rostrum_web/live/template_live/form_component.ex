@@ -65,6 +65,9 @@ defmodule RostrumWeb.TemplateLive.FormComponent do
   end
 
   defp save_template(socket, :new, template_params) do
+    unit = socket.assigns.current_unit
+    template_params = template_params
+    |> Map.put("unit_id", unit.id)
     case Meetings.create_template(template_params) do
       {:ok, template} ->
         notify_parent({:saved, template})

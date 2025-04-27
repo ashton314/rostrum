@@ -1,6 +1,6 @@
 <.header>
-  Template {@template.id}
-  <:subtitle>This is a template record from your database.</:subtitle>
+  {@template.title}
+  <:subtitle>This is a template from which you can make meetings.</:subtitle>
   <:actions>
     <.link patch={~p"/templates/#{@template}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit template</.button>
@@ -8,13 +8,14 @@
   </:actions>
 </.header>
 
+<.back navigate={~p"/templates"}>Back to templates</.back>
+
 <.list>
-  <:item title="Events">{@template.events}</:item>
   <:item title="Title">{@template.title}</:item>
   <:item title="Welcome blurb">{@template.welcome_blurb}</:item>
 </.list>
 
-<.back navigate={~p"/templates"}>Back to templates</.back>
+<.events_editor template={@template} current_user={@current_user} current_unit={@current_unit} />
 
 <.modal :if={@live_action == :edit} id="template-modal" show on_cancel={JS.patch(~p"/templates/#{@template}")}>
   <.live_component
@@ -23,6 +24,30 @@
     title={@page_title}
     action={@live_action}
     template={@template}
+    patch={~p"/templates/#{@template}"}
+  />
+</.modal>
+
+<.modal :if={@live_action == :edit_event} id="event-modal" show on_cancel={JS.patch(~p"/templates/#{@template}")}>
+  <.live_component
+    module={RostrumWeb.TemplateLive.NewEventForm}
+    id={@template.id}
+    title={@page_title}
+    action={@live_action}
+    template={@template}
+    event={@event}
+    patch={~p"/templates/#{@template}"}
+  />
+</.modal>
+
+<.modal :if={@live_action == :new_event} id="event-modal" show on_cancel={JS.patch(~p"/templates/#{@template}")}>
+  <.live_component
+    module={RostrumWeb.TemplateLive.NewEventForm}
+    id={@template.id}
+    title={@page_title}
+    action={@live_action}
+    template={@template}
+    after_event_id={@after_event_id}
     patch={~p"/templates/#{@template}"}
   />
 </.modal>

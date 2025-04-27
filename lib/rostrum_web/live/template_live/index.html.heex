@@ -12,7 +12,6 @@
   rows={@streams.templates}
   row_click={fn {_id, template} -> JS.navigate(~p"/templates/#{template}") end}
 >
-  <:col :let={{_id, template}} label="Events">{template.events}</:col>
   <:col :let={{_id, template}} label="Title">{template.title}</:col>
   <:col :let={{_id, template}} label="Welcome blurb">{template.welcome_blurb}</:col>
   <:action :let={{_id, template}}>
@@ -38,6 +37,7 @@
     title={@page_title}
     action={@live_action}
     template={@template}
+    current_unit={@current_unit}
     patch={~p"/templates"}
   />
 </.modal>
