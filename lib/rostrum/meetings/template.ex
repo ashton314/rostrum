@@ -3,7 +3,8 @@ defmodule Rostrum.Meetings.Template do
   import Ecto.Changeset
 
   @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
+  # @foreign_key_type :binary_id
+  @foreign_key_type :integer
   schema "templates" do
     field :events, :map
     field :title, :string
@@ -16,8 +17,8 @@ defmodule Rostrum.Meetings.Template do
   @doc false
   def changeset(template, attrs) do
     template
-    |> cast(attrs, [:events, :title, :welcome_blurb])
-    |> validate_required([:title, :welcome_blurb])
+    |> cast(attrs, [:events, :title, :welcome_blurb, :unit_id])
+    |> validate_required([:title, :welcome_blurb, :unit_id])
   end
 
   @doc """

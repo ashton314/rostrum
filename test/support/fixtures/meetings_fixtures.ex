@@ -11,13 +11,12 @@ defmodule Rostrum.MeetingsFixtures do
   """
   def meeting_fixture(%Unit{} = u, attrs \\ %{}) do
     {:ok, meeting} =
-      attrs
-      |> Enum.into(%{
+      Map.merge(%{
         date: ~D[2024-12-21],
         events: %{},
         unit_id: u.id,
         metadata: %{}
-      })
+      }, attrs)
       |> Rostrum.Meetings.create_meeting()
 
     meeting
@@ -30,13 +29,12 @@ defmodule Rostrum.MeetingsFixtures do
     u = if u, do: u, else: Rostrum.AccountsFixtures.unit_fixture()
 
     {:ok, template} =
-      attrs
-      |> Enum.into(%{
+      Map.merge(%{
         events: %{},
         unit_id: u.id,
         title: "some title",
         welcome_blurb: "some welcome_blurb"
-      })
+      }, attrs)
       |> Rostrum.Meetings.create_template()
 
     template

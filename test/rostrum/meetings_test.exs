@@ -5,7 +5,7 @@ defmodule Rostrum.MeetingsTest do
 
   def unnilify(%Meetings.Meeting{} = m) do
     for k <- Map.keys(m) do
-      {k, (if Map.get(m, k) == nil, do: "", else: Map.get(m, k))}
+      {k, if(Map.get(m, k) == nil, do: "", else: Map.get(m, k))}
     end
     |> Enum.into(%{})
   end
@@ -79,6 +79,7 @@ defmodule Rostrum.MeetingsTest do
   describe "templates" do
     alias Rostrum.Meetings.Template
 
+    import Rostrum.AccountsFixtures
     import Rostrum.MeetingsFixtures
 
     @invalid_attrs %{events: nil, title: nil, welcome_blurb: nil}
@@ -94,7 +95,14 @@ defmodule Rostrum.MeetingsTest do
     end
 
     test "create_template/1 with valid data creates a template" do
-      valid_attrs = %{events: %{}, title: "some title", welcome_blurb: "some welcome_blurb"}
+      unit = unit_fixture()
+
+      valid_attrs = %{
+        events: %{},
+        title: "some title",
+        welcome_blurb: "some welcome_blurb",
+        unit_id: unit.id
+      }
 
       assert {:ok, %Template{} = template} = Meetings.create_template(valid_attrs)
       assert template.events == %{}
@@ -108,7 +116,12 @@ defmodule Rostrum.MeetingsTest do
 
     test "update_template/2 with valid data updates the template" do
       template = template_fixture()
-      update_attrs = %{events: %{}, title: "some updated title", welcome_blurb: "some updated welcome_blurb"}
+
+      update_attrs = %{
+        events: %{},
+        title: "some updated title",
+        welcome_blurb: "some updated welcome_blurb"
+      }
 
       assert {:ok, %Template{} = template} = Meetings.update_template(template, update_attrs)
       assert template.events == %{}
@@ -131,6 +144,51 @@ defmodule Rostrum.MeetingsTest do
     test "change_template/1 returns a template changeset" do
       template = template_fixture()
       assert %Ecto.Changeset{} = Meetings.change_template(template)
+    end
+
+    # From o3-mini
+    @valid_template_attrs %{
+      title: "Sacrament Meeting Program",
+      welcome_blurb: "Welcome, dear brothers and sisters",
+      events: %{"events" => [%{"id" => "evt1", "type" => "opening-hymn"}]}
+    }
+
+    @meeting_data %{
+      date: ~D[2024-12-21],
+      presiding: "Bishop Smith",
+      conducting: "Elder Doe"
+    }
+
+    test "converts a template to a meeting changeset with merged fields" do
+      # Build a Template struct as if loaded from DB.
+      unit = unit_fixture()
+      template = template_fixture(unit, @valid_template_attrs)
+
+      changeset = Template.to_meeting(template, @meeting_data)
+
+      # Assert that the changeset is valid.
+      assert changeset.valid?
+
+      # Extract the changes for inspection.
+      meeting = apply_changes(changeset)
+
+      # Fields from template should be merged in
+      assert meeting.title == @valid_template_attrs.title
+      assert meeting.welcome_blurb == @valid_template_attrs.welcome_blurb
+      assert meeting.events == @valid_template_attrs.events
+
+      # Fields passed in meeting_data are also present.
+      assert meeting.date == ~D[2024-12-21]
+      assert meeting.presiding == "Bishop Smith"
+      assert meeting.conducting == "Elder Doe"
+    end
+
+    test "returns an invalid changeset when required meeting_data are missing" do
+      # Remove required :date and :unit_id from meeting_data
+      template = struct(Template, @valid_template_attrs)
+      changeset = Template.to_meeting(template, %{})
+      refute changeset.valid?
+      assert %{date: ["can't be blank"], unit_id: ["can't be blank"]} = errors_on(changeset)
     end
   end
 end
