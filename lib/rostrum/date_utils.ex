@@ -1,4 +1,12 @@
 defmodule Rostrum.DateUtils do
+alias Timex.Parse.Duration
+
+  def next_sunday() do
+    Timex.today()
+    |> Timex.weekday()
+    |> then(& 7 - &1)
+    |> then(&Timex.shift(Timex.today(), days: &1))
+  end
 
   def to_utc(dts, source_tz) when is_binary(dts) do
     dts

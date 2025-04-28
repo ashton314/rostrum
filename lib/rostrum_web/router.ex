@@ -110,6 +110,7 @@ defmodule RostrumWeb.Router do
 
     live "/meetings", MeetingLive.Index, :index
     live "/meetings/new", MeetingLive.Index, :new
+    live "/meetings/from_template", MeetingLive.Index, :from_template
     live "/meetings/:id/edit", MeetingLive.Index, :edit
     live "/meetings/:id", MeetingLive.Show, :show
     live "/meetings/:id/show/edit", MeetingLive.Show, :edit

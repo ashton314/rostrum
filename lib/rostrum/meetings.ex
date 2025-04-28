@@ -4,6 +4,7 @@ defmodule Rostrum.Meetings do
   """
 
   import Ecto.Query, warn: false
+  alias Phoenix.Template
   alias Rostrum.Repo
 
   alias Rostrum.Meetings.Meeting
@@ -76,7 +77,13 @@ defmodule Rostrum.Meetings do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_meeting(attrs \\ %{}) do
+  def create_meeting(attrs \\ %{})
+
+  def create_meeting(%Ecto.Changeset{} = cs) do
+    cs |> Repo.insert()
+  end
+
+  def create_meeting(attrs) do
     %Meeting{}
     |> Meeting.changeset(attrs)
     |> Repo.insert()
@@ -158,8 +165,10 @@ defmodule Rostrum.Meetings do
       [%Template{}, ...]
 
   """
-  def list_templates do
-    Repo.all(Template)
+  def list_templates(%Unit{} = unit) do
+    (from t in Template,
+          where: t.unit_id == ^unit.id)
+    |> Repo.all()
   end
 
   @doc """
@@ -176,7 +185,11 @@ defmodule Rostrum.Meetings do
       ** (Ecto.NoResultsError)
 
   """
-  def get_template!(id), do: Repo.get!(Template, id)
+  def get_template!(id, %Unit{} = unit) do
+    (from t in Template,
+          where: t.unit_id == ^unit.id and t.id == ^id)
+    |> Repo.one!()
+  end
 
   @doc """
   Creates a template.

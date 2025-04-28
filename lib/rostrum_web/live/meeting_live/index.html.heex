@@ -3,8 +3,8 @@
   <:actions>
     <.link
       :if={Rostrum.Accounts.authorized?(@current_user, @current_unit, :editor)}
-      patch={~p"/meetings/new?clone=1"}>
-      <button class="rounded-lg bg-green-700 hover:bg-green-600 mx-2 py-2 px-3 text-sm font-semibold leading-6 text-white">Default template (broken)</button>
+      patch={~p"/meetings/from_template"}>
+      <button class="rounded-lg bg-green-700 hover:bg-green-600 mx-2 py-2 px-3 text-sm font-semibold leading-6 text-white">New From Template</button>
     </.link>
     <.link
       :if={Rostrum.Accounts.authorized?(@current_user, @current_unit, :editor)}
@@ -118,4 +118,14 @@
     current_unit={@current_unit}
     patch={~p"/meetings"}
   />
+</.modal>
+
+<.modal :if={@live_action == :from_template} id="meeting-modal" show on_cancel={JS.patch(~p"/meetings")}>
+  <.table
+    id="template_list"
+    class="my-2"
+    rows={@streams.templates}
+    row_click={fn {_id, template} -> JS.push("instantiate", value: %{id: template.id}) end}>
+    <:col :let={{_id, template}} label="Template">{template.title}</:col>
+  </.table>
 </.modal>

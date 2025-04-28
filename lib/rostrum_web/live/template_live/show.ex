@@ -14,7 +14,7 @@ defmodule RostrumWeb.TemplateLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:template, Meetings.get_template!(id))
+     |> assign(:template, Meetings.get_template!(id, socket.assigns.current_unit))
      |> apply_action(socket.assigns.live_action, params)}
   end
 

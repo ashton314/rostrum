@@ -1,8 +1,10 @@
 defmodule RostrumWeb.MeetingLive.Index do
+  alias Rostrum.DateUtils
   use RostrumWeb, :live_view
 
   alias Rostrum.Accounts
   alias Rostrum.Meetings
+  alias Rostrum.Meetings.Template
   alias Rostrum.Meetings.Meeting
 
   @impl true
@@ -12,6 +14,7 @@ defmodule RostrumWeb.MeetingLive.Index do
       socket
       |> stream(:past, past)
       |> assign(:current, current)
+      |> stream(:templates, [])
       |> stream(:future, future)
 
     {:ok, socket}
@@ -28,11 +31,13 @@ defmodule RostrumWeb.MeetingLive.Index do
     |> assign(:meeting, Meetings.get_meeting!(id, socket.assigns.current_unit))
   end
 
-  defp apply_action(socket, :new, %{"clone" => "1"}) do
-    last_meeting = Accounts.get_active_meeting(socket.assigns.current_unit)
+  defp apply_action(socket, :from_template, _params) do
+    unit = socket.assigns.current_unit
+    templates = Meetings.list_templates(unit)
     socket
-    |> assign(:page_title, "New Meeting")
-    |> assign(:meeting, Meetings.clone_skeleton(last_meeting))
+    |> assign(:page_title, "New Meeting from Template")
+    |> stream(:templates, templates)
+    |> assign(:meeting, %Meeting{})
   end
 
   defp apply_action(socket, :new, _params) do
@@ -58,6 +63,19 @@ defmodule RostrumWeb.MeetingLive.Index do
     {:ok, _} = Meetings.delete_meeting(meeting)
 
     {:noreply, stream_delete(socket, :future, meeting)}
+  end
+
+  def handle_event("instantiate", %{"id" => template_id}, socket) do
+    template = Meetings.get_template!(template_id, socket.assigns.current_unit)
+    {:ok, meeting} =
+      template
+      |> Template.to_meeting(%{date: DateUtils.next_sunday()})
+      |> Meetings.create_meeting()
+
+    {:noreply,
+     socket
+     |> assign(:meeting, meeting)
+     |> redirect(to: ~p"/meetings/#{meeting}/show/edit")}
   end
 
   def list_hymns(%Meeting{} = meeting) do

@@ -6,7 +6,7 @@ defmodule RostrumWeb.TemplateLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :templates, Meetings.list_templates())}
+    {:ok, stream(socket, :templates, Meetings.list_templates(socket.assigns.current_unit))}
   end
 
   @impl true
@@ -17,7 +17,7 @@ defmodule RostrumWeb.TemplateLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Template")
-    |> assign(:template, Meetings.get_template!(id))
+    |> assign(:template, Meetings.get_template!(id, socket.assigns.current_unit))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -39,7 +39,7 @@ defmodule RostrumWeb.TemplateLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    template = Meetings.get_template!(id)
+    template = Meetings.get_template!(id, socket.assigns.current_unit)
     {:ok, _} = Meetings.delete_template(template)
 
     {:noreply, stream_delete(socket, :templates, template)}
