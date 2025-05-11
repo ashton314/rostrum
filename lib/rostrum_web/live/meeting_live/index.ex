@@ -2,7 +2,6 @@ defmodule RostrumWeb.MeetingLive.Index do
   alias Rostrum.DateUtils
   use RostrumWeb, :live_view
 
-  alias Rostrum.Accounts
   alias Rostrum.Meetings
   alias Rostrum.Meetings.Template
   alias Rostrum.Meetings.Meeting

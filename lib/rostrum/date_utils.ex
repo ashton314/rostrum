@@ -1,5 +1,4 @@
 defmodule Rostrum.DateUtils do
-alias Timex.Parse.Duration
 
   def next_sunday() do
     Timex.today()

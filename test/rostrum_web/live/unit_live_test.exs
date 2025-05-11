@@ -4,13 +4,13 @@ defmodule RostrumWeb.UnitLiveTest do
   import Phoenix.LiveViewTest
   import Rostrum.AccountsFixtures
 
-  @create_attrs %{name: "some name"}
+  @create_attrs %{name: "some name", slug: "some-name"}
   @update_attrs %{name: "some updated name"}
   @invalid_attrs %{name: nil}
 
   defp create_unit(_) do
-    unit = unit_fixture()
-    %{unit: unit}
+    {user, unit} = user_unit_fixture()
+    %{user: user, unit: unit}
   end
 
   describe "Index" do

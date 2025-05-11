@@ -2,7 +2,6 @@ defmodule RostrumWeb.TemplateLive.NewEventForm do
   use RostrumWeb, :live_component
 
   alias Rostrum.Meetings
-  alias Rostrum.Meetings.Template
   alias Rostrum.Meetings.Event
 
   @impl true
