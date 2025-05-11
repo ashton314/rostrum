@@ -25,8 +25,8 @@ defmodule Rostrum.MeetingsFixtures do
   @doc """
   Generate a template.
   """
-  def template_fixture(u \\ nil, attrs \\ %{}) do
-    u = if u, do: u, else: Rostrum.AccountsFixtures.unit_fixture()
+  def template_fixture(unit \\ nil, attrs \\ %{}) do
+    u = if unit, do: unit, else: Rostrum.AccountsFixtures.unit_fixture()
 
     {:ok, template} =
       Map.merge(%{

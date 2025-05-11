@@ -85,13 +85,15 @@ defmodule Rostrum.MeetingsTest do
     @invalid_attrs %{events: nil, title: nil, welcome_blurb: nil}
 
     test "list_templates/0 returns all templates" do
-      template = template_fixture()
-      assert Meetings.list_templates() == [template]
+      {_user, unit} = user_unit_fixture()
+      template = template_fixture(unit)
+      assert Meetings.list_templates(unit) == [template]
     end
 
     test "get_template!/1 returns the template with given id" do
-      template = template_fixture()
-      assert Meetings.get_template!(template.id) == template
+      {_user, unit} = user_unit_fixture()
+      template = template_fixture(unit)
+      assert Meetings.get_template!(template.id, unit) == template
     end
 
     test "create_template/1 with valid data creates a template" do
@@ -130,15 +132,17 @@ defmodule Rostrum.MeetingsTest do
     end
 
     test "update_template/2 with invalid data returns error changeset" do
-      template = template_fixture()
+      {_user, unit} = user_unit_fixture()
+      template = template_fixture(unit)
       assert {:error, %Ecto.Changeset{}} = Meetings.update_template(template, @invalid_attrs)
-      assert template == Meetings.get_template!(template.id)
+      assert template == Meetings.get_template!(template.id, unit)
     end
 
     test "delete_template/1 deletes the template" do
-      template = template_fixture()
+      {_user, unit} = user_unit_fixture()
+      template = template_fixture(unit)
       assert {:ok, %Template{}} = Meetings.delete_template(template)
-      assert_raise Ecto.NoResultsError, fn -> Meetings.get_template!(template.id) end
+      assert_raise Ecto.NoResultsError, fn -> Meetings.get_template!(template.id, unit) end
     end
 
     test "change_template/1 returns a template changeset" do
